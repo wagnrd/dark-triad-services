@@ -1,0 +1,9 @@
+{
+    "app": {
+        "version": "0.1"
+    },
+    "oidc": {
+        "baseUrl": "https://dark-triad.eu.auth0.com",
+        "audience": "https://dark-triad.com"
+    }
+}

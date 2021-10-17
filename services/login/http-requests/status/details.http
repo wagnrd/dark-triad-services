@@ -1,0 +1,4 @@
+GET {{baseUrl}}/status/details
+Accept: application/json
+
+###

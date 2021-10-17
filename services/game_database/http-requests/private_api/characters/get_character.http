@@ -1,0 +1,5 @@
+GET {{baseUrl}}/private_api/characters/{{characterName}}/userId/{{userId}}
+Accept: application/json
+Authorization: {{apiKey}}
+
+###

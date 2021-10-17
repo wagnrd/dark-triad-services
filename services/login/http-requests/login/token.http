@@ -1,0 +1,11 @@
+POST {{baseUrl}}/login/token
+Content-Type: application/json
+
+{
+  "challenge_response": {{response}},
+  "session_id": {{id}},
+  "email": "{{testUserEmail}}0",
+  "password": "{{testUserPassword}}"
+}
+
+###

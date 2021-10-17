@@ -1,0 +1,4 @@
+DELETE {{baseUrl}}/protected_api/characters/{{characterName}}
+Authorization: Bearer {{id_token}}
+
+###

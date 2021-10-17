@@ -1,0 +1,10 @@
+POST {{baseUrl}}/protected_api/characters
+Content-Type: application/json
+Authorization: Bearer {{id_token}}
+
+{
+    "name": "{{characterName}}",
+    "className": "{{characterClass}}"
+}
+
+###

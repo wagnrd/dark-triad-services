@@ -1,0 +1,10 @@
+{
+  "app": {
+    "version": "0.2"
+  },
+  "postgres": {
+    "host": "ec2-54-78-36-245.eu-west-1.compute.amazonaws.com",
+    "port": 5432,
+    "databaseName": "d89ccctu554t1e"
+  }
+}

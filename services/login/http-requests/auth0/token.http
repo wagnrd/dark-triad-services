@@ -1,0 +1,5 @@
+# curl --request POST   --url 'https://dark-triad.eu.auth0.com/oauth/token'   --header 'content-type: application/x-www-form-urlencoded'   --data 'grant_type=password&username=<email>&password=<password>&audience=https://dark-triad.com&client_id=<cliend-id>&client_secret=<client-secret>'
+POST {{oidcBaseUrl}}/oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&username={{testUserEmail}}&password={{testUserPassword}}&audience={{oidcAudience}}&scope=openid email profile offline_access&client_id={{oidcClientId}}&client_secret={{oidcClientSecret}}
