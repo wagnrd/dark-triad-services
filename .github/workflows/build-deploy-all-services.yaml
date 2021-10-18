@@ -1,0 +1,92 @@
+name: Build and deploy all services
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    name: Build and deploy
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1.2.0
+        with:
+          fetch-depth: 1
+
+      - name: Install prerequisite packages for building
+        run: |
+          sudo apt-get update
+          sudo apt-get install \
+            libjsoncpp-dev \
+            postgresql-server-dev-12 \
+            libfmt-dev \
+            libc-ares-dev \
+            libssl-dev \
+            openssl
+
+      - name: Build all services
+        run: |
+          mkdir cmake-build-release
+          cd cmake-build-release
+          cmake -DCMAKE_BUILD_TYPE=Release -G "CodeBlocks - Unix Makefiles" ..
+          cd ..
+          cmake --build ./cmake-build-release -- -j $(nproc)
+
+      - name: Install prerequisite packages for deployment
+        run: |
+          sudo rm -rf /etc/docker
+          sudo snap refresh
+          sudo snap install docker
+          curl https://cli-assets.heroku.com/install.sh | sh
+
+      - name: Deploy
+        env:
+          HEROKU_USERNAME: ${{ secrets.heroku_username }}
+          HEROKU_API_KEY: ${{ secrets.heroku_api_key }}
+          POSTGRES_USERNAME: ${{ secrets.postgres_username }}
+          POSTGRES_PASSWORD: ${{ secrets.postgres_password }}
+          APP_API_KEY: ${{ secrets.app_api_key }}
+        run: |
+          find . -maxdepth 1 -type d \( ! -name . \) -exec bash -c "cd '{}' && pwd && deploy.sh" \;
+
+      - name: Verify deployment
+        run: |
+          sleep_duration_in_s=10
+          echo Waiting $sleep_duration_in_s seconds for deployment to take effect...
+          sleep 10
+          find . -maxdepth 1 -type d \( ! -name . \) -exec bash -c "cd '{}' && pwd && verify_deployment.sh" \;
+
+#  test:
+#    name: Integration tests
+#    needs: build-and-deploy
+#    runs-on: ubuntu-20.04
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v1.2.0
+#        with:
+#          fetch-depth: 1
+#
+#      - name: Install prerequisite packages for integration testing
+#        run: sudo apt-get install openjdk-11-jre-headless
+#
+#      - name: Run integration tests
+#        env:
+#          API_KEY: ${{ secrets.app_api_key }}
+#          ENV: prod
+#        run: ./run_karate_tests.sh
+
+#  rollback:
+#    name: Rollback to previous version
+#    needs: test
+#    if: failure()
+#    runs-on: ubuntu-20.04
+#    steps:
+#      - name: Install prerequisite packages for rollback
+#        run: curl https://cli-assets.heroku.com/install.sh | sh
+#
+#      - name: Heroku rollback
+#        env:
+#          HEROKU_API_KEY: ${{ secrets.heroku_api_key }}
+#        run: heroku rollback --app=dark-triad-db
