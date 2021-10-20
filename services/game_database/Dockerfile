@@ -17,4 +17,4 @@ RUN apt-get update -y
 RUN apt-get install libjsoncpp1 \
                     libpq5 -y
 
-ENTRYPOINT ./build/dark_triad_database_api
+ENTRYPOINT ./build/database_service

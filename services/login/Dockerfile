@@ -17,4 +17,4 @@ RUN apt-get install libjsoncpp1 \
                     libpq5 \
                     ca-certificates -y
 
-ENTRYPOINT ./build/dark_triad_login_service
+ENTRYPOINT ./build/login_service
