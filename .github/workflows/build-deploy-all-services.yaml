@@ -80,7 +80,7 @@ jobs:
           API_KEY: ${{ secrets.app_api_key }}
           ENV: prod
         run: |
-          wget https://github.com/intuit/karate/releases/download/v$karateVersion/karate-1.1.0.jar
+          wget https://github.com/intuit/karate/releases/download/v1.1.0/karate-1.1.0.jar
           find . -maxdepth 1 -type d \( ! -name . \) -exec bash -c "cd '{}' && pwd && java -jar karate-1.1.0.jar -g test test" \;
 
   rollback:
