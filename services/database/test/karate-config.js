@@ -8,7 +8,7 @@ function fn() {
     };
 
     if (env === 'prod') {
-        config.baseUrl = 'https://dark-triad-db.herokuapp.com';
+        config.baseUrl = 'https://dark-triad-database-service.herokuapp.com';
         config.apiKey = java.lang.System.getenv('API_KEY');
     }
 
