@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-karateVersion=1.0.1
+karateVersion=1.1.0
 
 if [ ! -f "karate-$karateVersion.jar" ]; then
     echo "=== Downloading Karate executable ==="

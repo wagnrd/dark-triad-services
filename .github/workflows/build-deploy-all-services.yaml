@@ -41,7 +41,7 @@ jobs:
           sudo snap install docker
           curl https://cli-assets.heroku.com/install.sh | sh
 
-      - name: Deploy
+      - name: Deploy all services
         env:
           HEROKU_USERNAME: ${{ secrets.heroku_username }}
           HEROKU_API_KEY: ${{ secrets.heroku_api_key }}
@@ -50,7 +50,7 @@ jobs:
           APP_API_KEY: ${{ secrets.app_api_key }}
         run: |
           cd services
-          find . -maxdepth 1 -type d \( ! -name . \) -exec bash -c "cd '{}' && pwd && bash deploy.sh" \;
+          find . -maxdepth 1 -type d \( ! -name . \) -exec bash -c "cd '{}' && pwd && bash build-pipeline/deploy.sh" \;
           cd ..
 
       - name: Verify deployment
@@ -59,38 +59,40 @@ jobs:
           echo Waiting $sleep_duration_in_s seconds for deployment to take effect...
           sleep 10
           cd services
-          find . -maxdepth 1 -type d \( ! -name . \) -exec bash -c "cd '{}' && pwd && bash verify_deployment.sh" \;
+          find . -maxdepth 1 -type d \( ! -name . \) -exec bash -c "cd '{}' && pwd && bash build-pipeline/verify_deployment.sh" \;
           cd ..
 
-#  test:
-#    name: Integration tests
-#    needs: build-and-deploy
-#    runs-on: ubuntu-20.04
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v1.2.0
-#        with:
-#          fetch-depth: 1
-#
-#      - name: Install prerequisite packages for integration testing
-#        run: sudo apt-get install openjdk-11-jre-headless
-#
-#      - name: Run integration tests
-#        env:
-#          API_KEY: ${{ secrets.app_api_key }}
-#          ENV: prod
-#        run: ./run_karate_tests.sh
+  test:
+    name: Integration tests
+    needs: build-and-deploy
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1.2.0
+        with:
+          fetch-depth: 1
 
-#  rollback:
-#    name: Rollback to previous version
-#    needs: test
-#    if: failure()
-#    runs-on: ubuntu-20.04
-#    steps:
-#      - name: Install prerequisite packages for rollback
-#        run: curl https://cli-assets.heroku.com/install.sh | sh
-#
-#      - name: Heroku rollback
-#        env:
-#          HEROKU_API_KEY: ${{ secrets.heroku_api_key }}
-#        run: heroku rollback --app=dark-triad-db
+      - name: Install prerequisite packages for integration testing
+        run: sudo apt-get install openjdk-11-jre-headless
+
+      - name: Run integration tests
+        env:
+          API_KEY: ${{ secrets.app_api_key }}
+          ENV: prod
+        run: |
+          wget https://github.com/intuit/karate/releases/download/v$karateVersion/karate-1.1.0.jar
+          find . -maxdepth 1 -type d \( ! -name . \) -exec bash -c "cd '{}' && pwd && java -jar karate-1.1.0.jar -g test test" \;
+
+  rollback:
+    name: Rollback to previous version
+    needs: test
+    if: failure()
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Install prerequisite packages for rollback
+        run: curl https://cli-assets.heroku.com/install.sh | sh
+
+      - name: Heroku rollback
+        env:
+          HEROKU_API_KEY: ${{ secrets.heroku_api_key }}
+        run: find . -maxdepth 1 -type d \( ! -name . \) -exec bash -c "cd '{}' && pwd && bash build-pipeline/rollback.sh" \;
