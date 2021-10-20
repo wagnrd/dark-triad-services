@@ -15,6 +15,7 @@ COPY config.json /config.json
 
 RUN apt-get update -y
 RUN apt-get install libjsoncpp1 \
+                    libc-ares2 \
                     libpq5 -y
 
 ENTRYPOINT ./build/database_service
