@@ -1,5 +1,9 @@
 service_name="dark-triad-database-service"
 
+echo ""
+echo "=== $service_name ==="
+echo ""
+
 response=$(curl https://$service_name.herokuapp.com/status/details)
 echo Response: $response
 echo Commit hash: $GITHUB_SHA
