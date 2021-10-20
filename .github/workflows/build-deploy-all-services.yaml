@@ -73,15 +73,16 @@ jobs:
           fetch-depth: 1
 
       - name: Install prerequisite packages for integration testing
-        run: sudo apt-get install openjdk-11-jre-headless
+        run: |
+          sudo apt-get install openjdk-11-jre-headless
+          wget https://github.com/intuit/karate/releases/download/v1.1.0/karate-1.1.0.jar
 
       - name: Run integration tests
         env:
           API_KEY: ${{ secrets.app_api_key }}
           ENV: prod
         run: |
-          wget https://github.com/intuit/karate/releases/download/v1.1.0/karate-1.1.0.jar
-          find . -maxdepth 1 -type d \( ! -name . \) -exec bash -c "cd '{}' && pwd && java -jar karate-1.1.0.jar -g test test" \;
+          find . -maxdepth 1 -type d \( ! -name . \) -exec bash -c "cd '{}' && pwd && java -jar ../../karate-1.1.0.jar -g test test" \;
 
   rollback:
     name: Rollback to previous version
