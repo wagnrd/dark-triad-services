@@ -8,8 +8,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 string(TOLOWER "cmake-build-${CMAKE_BUILD_TYPE}" build_dir)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${build_dir})
 
-file(GLOB_RECURSE INCLUDES "include/**.hpp")
-file(GLOB_RECURSE SOURCES "src/**.cpp")
+file(GLOB_RECURSE INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/include/**.hpp")
+file(GLOB_RECURSE SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/**.cpp")
 
 add_executable(
         database_service
