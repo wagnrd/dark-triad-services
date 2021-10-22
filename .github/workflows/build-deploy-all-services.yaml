@@ -52,7 +52,7 @@ jobs:
           APP_API_KEY: ${{ secrets.app_api_key }}
         run: |
           cd services
-          for d in ./*/ ; do (cd "$d" && ./build-pipeline/deploy.sh); done
+          for d in ./*/ ; do (cd "$d" && bash build-pipeline/deploy.sh); done
           cd ..
 
       - name: Verify deployment
@@ -61,7 +61,7 @@ jobs:
           echo Waiting $sleep_duration_in_s seconds for deployment to take effect...
           sleep 10
           cd services
-          for d in ./*/ ; do (cd "$d" && ./build-pipeline/verify-deployment.sh); done
+          for d in ./*/ ; do (cd "$d" && bash build-pipeline/verify-deployment.sh); done
           cd ..
 
   test:
@@ -102,5 +102,5 @@ jobs:
           HEROKU_API_KEY: ${{ secrets.heroku_api_key }}
         run: |
           cd services
-          for d in ./*/ ; do (cd "$d" && ./build-pipeline/rollback.sh); done
+          for d in ./*/ ; do (cd "$d" && bash build-pipeline/rollback.sh); done
           cd ..
