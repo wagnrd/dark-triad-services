@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-exit 1
-
 service_name="dark-triad-database-service"
 
 echo ""
