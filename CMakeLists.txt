@@ -7,5 +7,5 @@ set(CMAKE_CXX_STANDARD 17)
 add_subdirectory("commons/drogon-extended")
 
 #services
-add_subdirectory("services/database")
 add_subdirectory("services/login")
+add_subdirectory("services/database")

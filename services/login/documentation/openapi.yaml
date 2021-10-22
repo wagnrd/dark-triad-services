@@ -1,0 +1,134 @@
+openapi: "3.0.0"
+info:
+  title: Dark Triad Login Service
+  version: 1.0.0
+paths:
+  /challenge:
+    post:
+      operationId: challenge
+      summary: Requests a challenge for the login
+      requestBody:
+        description: A nonce for the challenge generation
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChallengeRequest"
+      responses:
+        '200':
+          description: Returns a challenge session
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChallengeSession"
+        '400':
+          description: Invalid argument(s)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '500':
+          description: Unknown internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /token:
+    post:
+      operationId: token
+      summary: Requests a token with solved challenge
+      requestBody:
+        description: A challenge response attatched to a session and login credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChallengeResponseRequest"
+      responses:
+        '200':
+          description: Returns a token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+        '400':
+          description: Invalid argument(s)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '403':
+          description: Invalid challenge response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '500':
+          description: Unknown internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    ChallengeRequest:
+      type: object
+      properties:
+        nonce:
+          type: integer
+          format: int32
+
+    ChallengeSession:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        challenge:
+          type: integer
+          format: int32
+
+    ChallengeResponseRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        response:
+          type: integer
+          format: int32
+        email:
+          type: string
+        password:
+          type: string
+
+    TokenResponse:
+      type: object
+      properties:
+        id_token:
+          type: string
+          format: jwt-token
+        token_type:
+          type: string
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        description:
+          type: string
