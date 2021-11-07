@@ -1,10 +1,10 @@
 #include <drogon_extended/configuration/configuration.hpp>
 
 #include <include/configuration/base_config.hpp>
-#include "include/controller/status_controller.hpp"
+#include "include/controller/public_api/status_controller.hpp"
 
-void status::details(const drogon::HttpRequestPtr& request,
-                     std::function<void(const drogon::HttpResponsePtr&)>&& callback)
+void public_api::status::details(const drogon::HttpRequestPtr& request,
+                                 std::function<void(const drogon::HttpResponsePtr&)>&& callback)
 {
     auto config = Configuration<BaseConfig>::get();
 

@@ -1,0 +1,4 @@
+GET {{loginServiceBaseUrl}}/public_api/status/details
+Accept: application/json
+
+###

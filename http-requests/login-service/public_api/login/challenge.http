@@ -1,8 +1,8 @@
-POST {{loginServiceBaseUrl}}/login/challenge
+POST {{loginServiceBaseUrl}}/public_api/login/challenge
 Content-Type: application/json
 
 {
-    "nonce": 1
+  "nonce": 1
 }
 
 > {%

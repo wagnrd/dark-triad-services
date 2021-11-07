@@ -4,18 +4,18 @@
 #include <drogon_extended/exception_mapper/exception_mapper_macros.hpp>
 #include <drogon_extended/json_mapper/json_converter.hpp>
 
-#include <include/controller/login_controller.hpp>
+#include <include/controller/public_api/login_controller.hpp>
 #include <include/controller/factory/challenge_session_factory.hpp>
 #include <include/controller/factory/challenge_response_session_factory.hpp>
 #include <include/controller/factory/credentials_factory.hpp>
 
-login::login()
+public_api::login::login()
 {
     std::srand(std::time(nullptr)); // NOLINT(cert-msc51-cpp)
 }
 
-void login::challenge(const drogon::HttpRequestPtr& request,
-                      std::function<void(const drogon::HttpResponsePtr&)>&& callback)
+void public_api::login::challenge(const drogon::HttpRequestPtr& request,
+                                  std::function<void(const drogon::HttpResponsePtr&)>&& callback)
 {
     try
     {
@@ -34,8 +34,8 @@ void login::challenge(const drogon::HttpRequestPtr& request,
     }
 }
 
-void login::get_token(const drogon::HttpRequestPtr& request,
-                      std::function<void(const drogon::HttpResponsePtr&)>&& callback)
+void public_api::login::get_token(const drogon::HttpRequestPtr& request,
+                                  std::function<void(const drogon::HttpResponsePtr&)>&& callback)
 {
     try
     {

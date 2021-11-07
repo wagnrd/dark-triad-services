@@ -1,4 +1,4 @@
-POST {{loginServiceBaseUrl}}/login/challenge
+POST {{loginServiceBaseUrl}}/public_api/login/challenge
 Content-Type: application/json
 
 {
@@ -15,7 +15,7 @@ client.test("Store challenge response and session id", function() {
 
 ###
 
-POST {{loginServiceBaseUrl}}/login/token
+POST {{loginServiceBaseUrl}}/public_api/login/token
 Content-Type: application/json
 
 {

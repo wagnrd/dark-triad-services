@@ -1,7 +1,6 @@
 #include <fmt/format.h>
 #include <drogon/drogon.h>
 
-#include <include/configuration/base_config.hpp>
 #include <drogon/HttpTypes.h>
 #include <include/client/factory/oidc_id_token_factory.hpp>
 #include <include/client/exceptions/unauthorized_exception.hpp>

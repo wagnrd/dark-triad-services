@@ -1,4 +1,4 @@
-POST {{loginServiceBaseUrl}}/login/token
+POST {{loginServiceBaseUrl}}/public_api/login/token
 Content-Type: application/json
 
 {

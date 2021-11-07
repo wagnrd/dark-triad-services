@@ -1,4 +1,0 @@
-GET {{databaseServiceBaseUrl}}/status/details
-Accept: application/json
-
-###
