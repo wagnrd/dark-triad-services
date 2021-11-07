@@ -6,7 +6,7 @@ Feature: Login
 
   Scenario: Get token for valid user credential
 
-    Given path 'login/challenge'
+    Given path 'public_api/login/challenge'
     And request { nonce: 1234 }
     When method post
     Then status 200
@@ -14,7 +14,7 @@ Feature: Login
     * def challengeResponse = response.challenge -1234
     * def sessionId = response.session_id
 
-    Given path 'login/token'
+    Given path 'public_api/login/token'
     And request { session_id: #(sessionId), challenge_response: #(challengeResponse), email: '#(email)', password: '#(password)' }
     When method post
     Then status 200
