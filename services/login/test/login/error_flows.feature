@@ -5,7 +5,7 @@ Feature: Login happy cases
 
   Scenario Outline: Session not found
 
-    Given path 'login/token'
+    Given path 'public_api/login/token'
     And request { session_id: <invalidSessionId>, challenge_response: 0, email: 'some@e.mail', password: 'some-password' }
     When method post
     Then status 404
@@ -17,7 +17,7 @@ Feature: Login happy cases
 
   Scenario Outline: Get rejected for providing invalid challenge response and session gets invalidated
 
-    Given path 'login/challenge'
+    Given path 'public_api/login/challenge'
     And request { nonce: <nonce> }
     When method post
     Then status 200
@@ -25,12 +25,12 @@ Feature: Login happy cases
     * def correctChallengeResponse = response.challenge - nonce
     * def sessionId = response.session_id
 
-    Given path 'login/token'
+    Given path 'public_api/login/token'
     And request { session_id: #(sessionId), challenge_response: <invalidChallengeResponse>, email: '<email>', password: '<password>' }
     When method post
     Then status 403
 
-    Given path 'login/token'
+    Given path 'public_api/login/token'
     And request { session_id: #(sessionId), challenge_response: #(correctChallengeResponse), email: '<email>', password: '<password>' }
     When method post
     Then status 404
@@ -42,13 +42,13 @@ Feature: Login happy cases
 
   Scenario: Get rejected for missing nonce when requesting a challenge
 
-    Given path 'login/challenge'
+    Given path 'public_api/login/challenge'
     When method post
     Then status 400
 
   Scenario Outline: Get rejected when not providing an email or password
 
-    Given path 'login/challenge'
+    Given path 'public_api/login/challenge'
     And request { nonce: <nonce> }
     When method post
     Then status 200
@@ -56,12 +56,12 @@ Feature: Login happy cases
     * def challengeResponse = response.challenge - nonce
     * def sessionId = response.session_id
 
-    Given path 'login/token'
+    Given path 'public_api/login/token'
     And request { session_id: #(sessionId), challenge_response: #(challengeResponse), password: '<password>' }
     When method post
     Then status 400
 
-    Given path 'login/token'
+    Given path 'public_api/login/token'
     And request { session_id: #(sessionId), challenge_response: #(challengeResponse), email: '<email>' }
     When method post
     Then status 400
@@ -73,7 +73,7 @@ Feature: Login happy cases
 
   Scenario Outline: Get rejected when providing wrong email and/or password
 
-    Given path 'login/challenge'
+    Given path 'public_api/login/challenge'
     And request { nonce: <nonce> }
     When method post
     Then status 200
@@ -81,7 +81,7 @@ Feature: Login happy cases
     * def challengeResponse = response.challenge - nonce
     * def sessionId = response.session_id
 
-    Given path 'login/token'
+    Given path 'public_api/login/token'
     And request { session_id: #(sessionId), challenge_response: #(challengeResponse), email: '<email>',  password: '<password>' }
     When method post
     Then status 401

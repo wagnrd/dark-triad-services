@@ -12,7 +12,7 @@
 Install the following dependency packages:
 
 ```shell
-$ sudo apt install libjsoncpp-dev postgresql-server-dev-12 uuid-dev zlib1g-dev libfmt-dev
+$ sudo apt install libjsoncpp-dev postgresql-server-dev-12 uuid-dev zlib1g-dev libfmt-dev libssl-dev
 ```
 
 #### Troubleshooting

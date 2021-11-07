@@ -5,7 +5,7 @@ Feature: Login happy cases
 
   Scenario Outline: Get token for valid user credentials and session gets invalidated after being finished
 
-    Given path 'login/challenge'
+    Given path 'public_api/login/challenge'
     And request { nonce: <nonce> }
     When method post
     Then status 200
@@ -13,13 +13,13 @@ Feature: Login happy cases
     * def challengeResponse = response.challenge - nonce
     * def sessionId = response.session_id
 
-    Given path 'login/token'
+    Given path 'public_api/login/token'
     And request { session_id: #(sessionId), challenge_response: #(challengeResponse), email: '<email>', password: '<password>' }
     When method post
     Then status 200
     And match response == { id_token: #string, token_type: #string }
 
-    Given path 'login/token'
+    Given path 'public_api/login/token'
     And request { session_id: #(sessionId), challenge_response: #(challengeResponse), email: '<email>', password: '<password>' }
     When method post
     Then status 404
