@@ -1,4 +1,4 @@
-POST {{baseUrl}}/login/challenge
+POST {{loginServiceBaseUrl}}/login/challenge
 Content-Type: application/json
 
 {

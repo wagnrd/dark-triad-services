@@ -1,4 +1,0 @@
-PUT {{baseUrl}}/private_api/characters/{{characterName}}/exp/2000
-Authorization: {{apiKey}}
-
-###

@@ -1,4 +1,4 @@
-GET {{baseUrl}}/protected_api/characters
+GET {{databaseServiceBaseUrl}}/protected_api/characters
 Accept: application/json
 Authorization: Bearer {{id_token}}
 

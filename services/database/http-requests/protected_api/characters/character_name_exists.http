@@ -1,5 +1,0 @@
-GET {{baseUrl}}/protected_api/characters/{{characterName}}/exists
-Accept: application/json
-Authorization: Bearer {{id_token}}
-
-###
