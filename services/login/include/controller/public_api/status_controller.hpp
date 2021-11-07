@@ -1,5 +1,5 @@
-#ifndef DATABASE_SERVICE_STATUS_HPP
-#define DATABASE_SERVICE_STATUS_HPP
+#ifndef DARK_TRIAD_LOGIN_SERVICE_LOGIN_HPP
+#define DARK_TRIAD_LOGIN_SERVICE_LOGIN_HPP
 
 #include <drogon/HttpController.h>
 
@@ -21,4 +21,4 @@ namespace public_api
     };
 }
 
-#endif //DATABASE_SERVICE_STATUS_HPP
+#endif //DARK_TRIAD_LOGIN_SERVICE_LOGIN_HPP

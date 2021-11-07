@@ -4,22 +4,11 @@
 #include <include/service/login/exception/invalid_challenge_response_exception.hpp>
 #include "include/service/login/login_service.hpp"
 
-int LoginService::next_session_id()
-{
-    return currentSessionId++;
-}
-
 ChallengeSession LoginService::get_challenge_session(int clientNonce)
 {
-    std::unique_lock<std::mutex> lock(sessionsMutex);
-
-    auto serverNonce = std::rand(); // NOLINT(cert-msc50-cpp)
     auto sessionId = next_session_id();
 
-    LOG_DEBUG << "Creating session: " << sessionId;
-    sessions[sessionId] = serverNonce;
-
-    auto challenge = clientNonce + serverNonce;
+    LOG_DEBUG << "Created session: " << sessionId;
 
     return ChallengeSession(sessionId, challenge);
 }

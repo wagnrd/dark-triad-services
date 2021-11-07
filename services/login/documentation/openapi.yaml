@@ -3,7 +3,7 @@ info:
   title: Dark Triad Login Service
   version: 1.0.0
 paths:
-  /challenge:
+  /public_api/challenge:
     post:
       operationId: challenge
       summary: Requests a challenge for the login
@@ -34,7 +34,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
-  /token:
+  /public_api/token:
     post:
       operationId: token
       summary: Requests a token with solved challenge

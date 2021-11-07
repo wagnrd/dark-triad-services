@@ -9,11 +9,6 @@
 #include <include/controller/factory/challenge_response_session_factory.hpp>
 #include <include/controller/factory/credentials_factory.hpp>
 
-public_api::login::login()
-{
-    std::srand(std::time(nullptr)); // NOLINT(cert-msc51-cpp)
-}
-
 void public_api::login::challenge(const drogon::HttpRequestPtr& request,
                                   std::function<void(const drogon::HttpResponsePtr&)>&& callback)
 {

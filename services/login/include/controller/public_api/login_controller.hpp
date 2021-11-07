@@ -1,5 +1,5 @@
-#ifndef DATABASE_SERVICE_STATUS_HPP
-#define DATABASE_SERVICE_STATUS_HPP
+#ifndef DARK_TRIAD_LOGIN_SERVICE_LOGIN_HPP
+#define DARK_TRIAD_LOGIN_SERVICE_LOGIN_HPP
 
 #include <drogon/HttpController.h>
 #include "../exception_mapper/login_exception_mapper.hpp"
@@ -18,8 +18,6 @@ namespace public_api
             METHOD_ADD(login::get_token, "/token", drogon::Post);
         METHOD_LIST_END
 
-        login();
-
         void challenge(const drogon::HttpRequestPtr& request,
                        std::function<void(const drogon::HttpResponsePtr&)>&& callback);
 
@@ -28,4 +26,4 @@ namespace public_api
     };
 }
 
-#endif //DATABASE_SERVICE_STATUS_HPP
+#endif //DARK_TRIAD_LOGIN_SERVICE_LOGIN_HPP

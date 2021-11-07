@@ -1,12 +1,14 @@
+#include <utility>
+
 #ifndef DARK_TRIAD_LOGIN_SERVICE_CHALLENGE_SESSION_HPP
 #define DARK_TRIAD_LOGIN_SERVICE_CHALLENGE_SESSION_HPP
 
 class ChallengeSession {
 public:
-    int id;
+    std::string id;
     int challenge;
 
-    ChallengeSession(int id, int challenge) : id(id), challenge(challenge)
+    ChallengeSession(std::string id, int challenge) : id(std::move(id)), challenge(challenge)
     {}
 };
 
