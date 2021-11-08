@@ -17,6 +17,7 @@ RUN apt-get update -y
 RUN apt-get install libjsoncpp1 \
                     libc-ares2 \
                     libpq5 \
+                    libhiredis0.14 \
                     ca-certificates -y
 
 ENTRYPOINT ./build/login_service
