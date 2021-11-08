@@ -1,6 +1,6 @@
 #include <chrono>
 #include <iomanip>
-#include "include/configuration/oidc_config.hpp"
+#include "include/configuration/app_config.hpp"
 
 AppConfig::AppConfig(const Json::Value& json) : ConfigModel(json)
 {

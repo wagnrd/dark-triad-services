@@ -5,14 +5,16 @@
 
 class BaseConfig;
 
-class OidcConfig: public ConfigModel<BaseConfig> {
+class AppConfig: public ConfigModel<BaseConfig> {
 public:
-    std::string baseUrl;
-    std::string clientId;
-    std::string clientSecret;
-    std::string audience;
+    std::string version;
+    std::string commitHash;
+    std::string startupTime;
 
-    explicit OidcConfig(const Json::Value& json);
+    explicit AppConfig(const Json::Value& json);
+
+private:
+    static std::string currentTimeAsString();
 };
 
 #endif //DARK_TRIAD_LOGIN_SERVICE_APP_CONFIG_HPP

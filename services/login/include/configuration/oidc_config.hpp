@@ -1,20 +1,18 @@
-#ifndef DATABASE_API_APP_CONFIG_HPP
-#define DATABASE_API_APP_CONFIG_HPP
+#ifndef DARK_TRIAD_LOGIN_SERVICE_OIDC_CONFIG_HPP
+#define DARK_TRIAD_LOGIN_SERVICE_OIDC_CONFIG_HPP
 
 #include <drogon_extended/configuration/config_model.hpp>
 
 class BaseConfig;
 
-class AppConfig: public ConfigModel<BaseConfig> {
+class OidcConfig: public ConfigModel<BaseConfig> {
 public:
-    std::string version;
-    std::string commitHash;
-    std::string startupTime;
+    std::string baseUrl;
+    std::string clientId;
+    std::string clientSecret;
+    std::string audience;
 
-    explicit AppConfig(const Json::Value& json);
-
-private:
-    static std::string currentTimeAsString();
+    explicit OidcConfig(const Json::Value& json);
 };
 
-#endif //DATABASE_API_APP_CONFIG_HPP
+#endif //DARK_TRIAD_LOGIN_SERVICE_OIDC_CONFIG_HPP

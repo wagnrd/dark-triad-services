@@ -1,4 +1,4 @@
-#include "include/configuration/app_config.hpp"
+#include "include/configuration/oidc_config.hpp"
 
 OidcConfig::OidcConfig(const Json::Value& json) : ConfigModel(json)
 {

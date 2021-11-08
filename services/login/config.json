@@ -5,5 +5,9 @@
     "oidc": {
         "baseUrl": "https://dark-triad.eu.auth0.com",
         "audience": "https://dark-triad.com"
+    },
+    "redis": {
+        "ipAddress": "52.50.33.54",
+        "port": 17476
     }
 }

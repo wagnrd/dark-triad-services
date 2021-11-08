@@ -20,10 +20,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install \
             libjsoncpp-dev \
-            postgresql-server-dev-12 \
             libfmt-dev \
             libc-ares-dev \
             libssl-dev \
+            libhiredis-dev \
+            postgresql-server-dev-12 \
             openssl
 
       - name: Build all services
@@ -49,6 +50,7 @@ jobs:
           POSTGRES_PASSWORD: ${{ secrets.postgres_password }}
           OIDC_CLIENT_ID: ${{ secrets.oidc_client_id }}
           OIDC_CLIENT_SECRET: ${{ secrets.oidc_client_secret }}
+          REDIS_PASSWORD: ${{ secrets.redis_password }}
           APP_API_KEY: ${{ secrets.app_api_key }}
         run: |
           cd services
