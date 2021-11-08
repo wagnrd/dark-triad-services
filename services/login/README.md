@@ -15,7 +15,7 @@ Login service for Dark Triad.
 Install the following dependency packages:
 
 ```shell
-$ sudo apt install libjsoncpp-dev libfmt-dev libc-ares-dev libssl-dev uuid-dev zlib1g-dev
+$ sudo apt install libjsoncpp-dev libfmt-dev libc-ares-dev libssl-dev uuid-dev zlib1g-dev libhiredis-dev
 ```
 
 #### Troubleshooting

@@ -13,7 +13,7 @@ ChallengeSession SessionsDB::createSession(int clientNonce)
 
     sessions[sessionId] = serverNonce;
 
-    return ChallengeSession(sessionId, challenge);
+    return {sessionId, challenge};
 }
 
 int SessionsDB::findServerNonceBySessionId(const std::string& sessionId)

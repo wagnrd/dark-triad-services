@@ -7,8 +7,8 @@
 #include <include/service/login/model/challenge_response_session.hpp>
 #include <include/service/login/model/credentials.hpp>
 #include <include/client/model/oidc_id_token.hpp>
-//#include <include/client/auth0_client.hpp>
-#include <include/client/dummy_oidc_client.hpp>
+#include <include/client/auth0_client.hpp>
+//#include <include/client/dummy_oidc_client.hpp>
 #include <include/database/sessions_db.hpp>
 
 class LoginService: public Service<LoginService> {
