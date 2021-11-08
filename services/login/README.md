@@ -43,7 +43,7 @@ Install Docker with `sudo snap install docker`.
 #### Build container
 
 ```shell
-sudo docker build --tag local:login-service --build-arg oidc_client_id=<value> --build-arg oidc_client_secret=<value> .
+sudo docker build --tag local:login-service --build-arg oidc_client_id=<value> --build-arg oidc_client_secret=<value>  --build-arg redis_password=<value>.
 ```
 
 #### Start container (for testing)
