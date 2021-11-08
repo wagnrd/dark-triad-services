@@ -5,8 +5,8 @@
 
 class SessionNotFoundException: public std::runtime_error {
 public:
-    explicit SessionNotFoundException(int sessionId)
-            : std::runtime_error("Session id '" + std::to_string(sessionId) + "' is invalid!")
+    explicit SessionNotFoundException(const std::string& sessionId)
+            : std::runtime_error("Session id '" + sessionId + "' is invalid!")
     {}
 };
 

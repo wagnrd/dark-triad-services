@@ -1,7 +1,7 @@
-#include <utility>
-
 #ifndef DARK_TRIAD_LOGIN_SERVICE_CHALLENGE_SESSION_HPP
 #define DARK_TRIAD_LOGIN_SERVICE_CHALLENGE_SESSION_HPP
+
+#include <utility>
 
 class ChallengeSession {
 public:

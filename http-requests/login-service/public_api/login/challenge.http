@@ -9,7 +9,7 @@ Content-Type: application/json
 client.test("Store challenge response and session id", function() {
   client.assert(response.status === 200, "Response status is not 200");
   client.global.set("response", response.body.challenge - 1);
-  client.global.set("id", response.body.session_id);
+  client.global.set("sessionId", response.body.session_id);
 });
 %}
 

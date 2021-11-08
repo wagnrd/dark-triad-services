@@ -9,9 +9,8 @@ class InvalidChallengeResponseException: public std::runtime_error {
 public:
     explicit InvalidChallengeResponseException(const ChallengeResponseSession& session)
             : runtime_error(
-            "Challenge response '" + std::to_string(session.response) + "' for session id '" + std::to_string(
-                    session.id
-            ) + "' is invalid!"
+            "Challenge response '" + std::to_string(session.response) + "' for session id '" + session.id
+            + "' is invalid!"
     )
     {}
 };

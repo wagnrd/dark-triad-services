@@ -4,8 +4,8 @@
 
 ChallengeResponseSession ChallengeResponseSessionFactory::from_json(const std::shared_ptr<Json::Value>& jsonPtr)
 {
+    auto sessionId = JsonConverter::check(jsonPtr, "session_id").asString();
     auto challengeResponse = JsonConverter::check(jsonPtr, "challenge_response").asInt();
-    auto sessionId = JsonConverter::check(jsonPtr, "session_id").asInt();
 
-    return ChallengeResponseSession(sessionId, challengeResponse);
+    return {sessionId, challengeResponse};
 }

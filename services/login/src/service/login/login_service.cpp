@@ -1,45 +1,33 @@
 #include <trantor/utils/Logger.h>
 
-#include <include/service/login/exception/invalid_session_exception.hpp>
 #include <include/service/login/exception/invalid_challenge_response_exception.hpp>
 #include "include/service/login/login_service.hpp"
 
 ChallengeSession LoginService::get_challenge_session(int clientNonce)
 {
-    auto sessionId = next_session_id();
+    LOG_DEBUG << "Creating session for clientNonce: " << clientNonce;
+    auto session = sessionsDB->createSession(clientNonce);
+    LOG_DEBUG << "Created session: " << session.id;
 
-    LOG_DEBUG << "Created session: " << sessionId;
-
-    return ChallengeSession(sessionId, challenge);
+    return session;
 }
 
 OidcIdToken LoginService::get_token(const ChallengeResponseSession& session, const Credentials& credentials)
 {
     LOG_DEBUG << "Looking up session: " << session.id;
-    auto serverNonce = safely_find_server_nonce(session.id);
-    safely_delete_session(session.id);
+    auto serverNonce = sessionsDB->findServerNonceBySessionId(session.id);
+    LOG_DEBUG << "Found session '" << session.id << "' with serverNonce: " << serverNonce;
+
+    LOG_DEBUG << "Deleting session: " << session.id;
+    sessionsDB->deleteSessionBySessionId(session.id);
+    LOG_DEBUG << "Deleted session: " << session.id;
 
     if (serverNonce != session.response)
         throw InvalidChallengeResponseException(session);
 
-    return oidcClient->get_token(credentials);
-}
+    LOG_DEBUG << "Fetching id token for user: " << credentials.email;
+    auto oidcIdToken = oidcClient->get_token(credentials);
+    LOG_DEBUG << "Fetched id token for user: " << credentials.email;
 
-int LoginService::safely_find_server_nonce(int sessionId)
-{
-    std::unique_lock<std::mutex> lock(sessionsMutex);
-
-    auto sessionIt = sessions.find(sessionId);
-
-    if (sessionIt == sessions.end())
-        throw SessionNotFoundException(sessionId);
-
-    return sessionIt->second;
-}
-
-void LoginService::safely_delete_session(int sessionId)
-{
-    std::unique_lock<std::mutex> lock(sessionsMutex);
-
-    sessions.erase(sessionId);
+    return oidcIdToken;
 }

@@ -3,7 +3,7 @@ Content-Type: application/json
 
 {
   "challenge_response": {{response}},
-  "session_id": {{id}},
+  "session_id": "{{sessionId}}",
   "email": "{{userId}}",
   "password": "{{password}}"
 }
