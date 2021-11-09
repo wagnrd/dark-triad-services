@@ -19,5 +19,6 @@ RUN apt-get install libjsoncpp1 \
                     libpq5 \
                     libhiredis0.14 \
                     ca-certificates -y
+RUN ldconfig -p | grep libhiredis
 
 ENTRYPOINT ./build/login_service
