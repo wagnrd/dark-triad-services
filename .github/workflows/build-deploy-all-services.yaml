@@ -24,6 +24,7 @@ jobs:
             libc-ares-dev \
             libssl-dev \
             libhiredis-dev \
+            libhiredis0.14 \
             postgresql-server-dev-12 \
             openssl
 
