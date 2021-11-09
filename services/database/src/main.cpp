@@ -8,7 +8,9 @@ int main()
     auto config = Configuration<BaseConfig>::get();
 
     drogon::app().addListener("0.0.0.0", config->webServer->port)
+                 .enableRelaunchOnError()
                  .setThreadNum(config->webServer->concurrency)
+                 .setBrStatic(false)
                  .createDbClient(
                          "postgresql",
                          config->postgres->host,
@@ -22,6 +24,5 @@ int main()
                              response->addHeader("Access-Control-Allow-Origin", "*");
                          }
                  )
-                 .enableRelaunchOnError()
                  .run();
 }
