@@ -6,8 +6,6 @@
 void public_api::status::details(const drogon::HttpRequestPtr& request,
                                  std::function<void(const drogon::HttpResponsePtr&)>&& callback)
 {
-    auto config = Configuration<BaseConfig>::get();
-
     Json::Value json;
     json["version"] = config->app->version;
     json["commitHash"] = config->app->commitHash;

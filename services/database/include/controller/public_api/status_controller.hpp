@@ -6,6 +6,9 @@
 namespace public_api
 {
     class status: public drogon::HttpController<status> {
+
+        std::shared_ptr<BaseConfig> config = Configuration<BaseConfig>::get();
+
     public:
         METHOD_LIST_BEGIN
             METHOD_ADD(status::details, "/details", drogon::Get);
