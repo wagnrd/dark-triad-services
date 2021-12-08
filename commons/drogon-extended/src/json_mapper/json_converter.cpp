@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include <drogon_extended/json_mapper/json_converter.hpp>
 
 Json::Value& JsonConverter::check(const std::shared_ptr<Json::Value>& jsonPtr, const std::string& key)
