@@ -2,4 +2,4 @@
 #define MINOR 7
 #define PATCH 3
 #define DROGON_VERSION "1.7.3"
-#define DROGON_VERSION_SHA1 "0fa5a9fce040b9bfadb6b8697c4c93bdfa5f4875"
+#define DROGON_VERSION_SHA1 "62df186a914b35c630c97aed73c6d7ee77d3c310"
