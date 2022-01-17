@@ -12,11 +12,11 @@ class CharactersService: public Service<CharactersService> {
     CharactersDB* charactersDb = CharactersDB::get();
 
 public:
-    Character get_character(const std::string& userId, const std::string& characterName);
-    std::vector<Character> all_characters(const std::string& userId);
-    void create_character(const std::string& userId, const Character& character);
+    drogon::Task<Character> get_character(const std::string& userId, const std::string& characterName);
+    drogon::Task<std::vector<Character>> all_characters(const std::string& userId);
+    drogon::Task<void> create_character(const std::string& userId, const Character& character);
     void delete_character(const std::string& userId, const std::string& characterName);
-    bool character_name_exists(const std::string& characterName);
+    drogon::Task<bool> character_name_exists(const std::string& characterName);
     void update_exp(const std::string& characterName, uint32_t exp);
 };
 

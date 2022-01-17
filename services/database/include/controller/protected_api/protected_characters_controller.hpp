@@ -1,7 +1,7 @@
 #ifndef DATABASE_API_CHARACTERS_HPP
 #define DATABASE_API_CHARACTERS_HPP
 
-#include <drogon/HttpController.h>
+#include <drogon/drogon.h>
 #include <drogon_extended/security/security.hpp>
 
 #include <include/configuration/base_config.hpp>
@@ -43,19 +43,19 @@ P90F2g0l/3qfb8+j5g==
             METHOD_ADD(characters::character_name_exists, "/{1}/exists", drogon::Get);
         METHOD_LIST_END
 
-        void get_all_characters(const drogon::HttpRequestPtr& request,
-                                std::function<void(const drogon::HttpResponsePtr&)>&& callback);
+        drogon::Task<> get_all_characters(const drogon::HttpRequestPtr request,
+                                          std::function<void(const drogon::HttpResponsePtr&)> callback);
 
-        void create_character(const drogon::HttpRequestPtr& request,
-                              std::function<void(const drogon::HttpResponsePtr&)>&& callback);
+        drogon::Task<> create_character(drogon::HttpRequestPtr request,
+                                        std::function<void(const drogon::HttpResponsePtr&)> callback);
 
-        void delete_character(const drogon::HttpRequestPtr& request,
-                              std::function<void(const drogon::HttpResponsePtr&)>&& callback,
-                              const std::string& characterName);
+        drogon::Task<> delete_character(drogon::HttpRequestPtr request,
+                                        std::function<void(const drogon::HttpResponsePtr&)> callback,
+                                        const std::string& characterName);
 
-        void character_name_exists(const drogon::HttpRequestPtr& request,
-                                   std::function<void(const drogon::HttpResponsePtr&)>&& callback,
-                                   const std::string& characterName);
+        drogon::Task<> character_name_exists(drogon::HttpRequestPtr request,
+                                             std::function<void(const drogon::HttpResponsePtr&)> callback,
+                                             const std::string& characterName);
     };
 }
 

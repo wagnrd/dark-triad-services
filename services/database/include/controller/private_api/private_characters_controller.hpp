@@ -21,15 +21,15 @@ namespace private_api
             METHOD_ADD(characters::update_exp, "/{1}/exp/{2}}", drogon::Put);
         METHOD_LIST_END
 
-        void get_character(const drogon::HttpRequestPtr& request,
-                           std::function<void(const drogon::HttpResponsePtr&)>&& callback,
-                           const std::string& characterName,
-                           const std::string& userId);
+        drogon::Task<> get_character(drogon::HttpRequestPtr request,
+                                     std::function<void(const drogon::HttpResponsePtr&)> callback,
+                                     const std::string& characterName,
+                                     const std::string& userId);
 
-        void update_exp(const drogon::HttpRequestPtr& request,
-                        std::function<void(const drogon::HttpResponsePtr&)>&& callback,
-                        const std::string& characterName,
-                        uint32_t exp);
+        drogon::Task<void> update_exp(drogon::HttpRequestPtr request,
+                                      std::function<void(const drogon::HttpResponsePtr&)> callback,
+                                      const std::string& characterName,
+                                      uint32_t exp);
     };
 }
 

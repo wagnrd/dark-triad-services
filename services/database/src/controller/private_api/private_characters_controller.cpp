@@ -5,15 +5,15 @@
 #include <include/converter/character_converter.hpp>
 #include "include/controller/private_api/private_characters_controller.hpp"
 
-void private_api::characters::get_character(const drogon::HttpRequestPtr& request,
-                                            std::function<void(const drogon::HttpResponsePtr&)>&& callback,
-                                            const std::string& characterName, const std::string& userId)
+drogon::Task<> private_api::characters::get_character(drogon::HttpRequestPtr request,
+                                                      std::function<void(const drogon::HttpResponsePtr&)> callback,
+                                                      const std::string& characterName, const std::string& userId)
 {
     try
     {
         SECURITY_GUARD(API_KEY(config->webServer->apiKey))
 
-        auto character = charactersService->get_character(userId, characterName);
+        auto character = co_await charactersService->get_character(userId, characterName);
         auto responseJson = CharacterConverter::to_json(character);
         callback(drogon::HttpResponse::newHttpJsonResponse(*responseJson));
     }
@@ -23,9 +23,9 @@ void private_api::characters::get_character(const drogon::HttpRequestPtr& reques
     }
 }
 
-void private_api::characters::update_exp(const drogon::HttpRequestPtr& request,
-                                         std::function<void(const drogon::HttpResponsePtr&)>&& callback,
-                                         const std::string& characterName, uint32_t exp)
+drogon::Task<void> private_api::characters::update_exp(drogon::HttpRequestPtr request,
+                                                       std::function<void(const drogon::HttpResponsePtr&)> callback,
+                                                       const std::string& characterName, uint32_t exp)
 {
     try
     {

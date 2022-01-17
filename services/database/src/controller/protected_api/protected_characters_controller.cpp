@@ -5,8 +5,9 @@
 #include <include/converter/character_converter.hpp>
 #include "include/controller/protected_api/protected_characters_controller.hpp"
 
-void protected_api::characters::get_all_characters(const drogon::HttpRequestPtr& request,
-                                                   std::function<void(const drogon::HttpResponsePtr&)>&& callback)
+drogon::Task<> protected_api::characters::get_all_characters(const drogon::HttpRequestPtr request,
+                                                             std::function<void(
+                                                                     const drogon::HttpResponsePtr&)> callback)
 {
     try
     {
@@ -14,7 +15,7 @@ void protected_api::characters::get_all_characters(const drogon::HttpRequestPtr&
 
         std::string userId = decodedJwtToken.get_payload_claim("email")
                                             .as_string();
-        auto characters = charactersService->all_characters(userId);
+        auto characters = co_await charactersService->all_characters(userId);
 
         Json::Value charactersJson;
 
@@ -33,8 +34,9 @@ void protected_api::characters::get_all_characters(const drogon::HttpRequestPtr&
     }
 }
 
-void protected_api::characters::create_character(const drogon::HttpRequestPtr& request,
-                                                 std::function<void(const drogon::HttpResponsePtr&)>&& callback)
+drogon::Task<> protected_api::characters::create_character(drogon::HttpRequestPtr request,
+                                                           std::function<void(
+                                                                   const drogon::HttpResponsePtr&)> callback)
 {
     try
     {
@@ -44,7 +46,7 @@ void protected_api::characters::create_character(const drogon::HttpRequestPtr& r
 
         std::string userId = decodedJwtToken.get_payload_claim("email")
                                             .as_string();
-        charactersService->create_character(userId, character);
+        co_await charactersService->create_character(userId, character);
 
         auto response = drogon::HttpResponse::newHttpResponse();
         response->setStatusCode(drogon::HttpStatusCode::k201Created);
@@ -56,9 +58,9 @@ void protected_api::characters::create_character(const drogon::HttpRequestPtr& r
     }
 }
 
-void protected_api::characters::delete_character(const drogon::HttpRequestPtr& request,
-                                                 std::function<void(const drogon::HttpResponsePtr&)>&& callback,
-                                                 const std::string& characterName)
+drogon::Task<> protected_api::characters::delete_character(drogon::HttpRequestPtr request,
+                                                           std::function<void(const drogon::HttpResponsePtr&)> callback,
+                                                           const std::string& characterName)
 {
     try
     {
@@ -78,15 +80,16 @@ void protected_api::characters::delete_character(const drogon::HttpRequestPtr& r
     }
 }
 
-void protected_api::characters::character_name_exists(const drogon::HttpRequestPtr& request,
-                                                      std::function<void(const drogon::HttpResponsePtr&)>&& callback,
-                                                      const std::string& characterName)
+drogon::Task<> protected_api::characters::character_name_exists(drogon::HttpRequestPtr request,
+                                                                std::function<void(
+                                                                        const drogon::HttpResponsePtr&)> callback,
+                                                                const std::string& characterName)
 {
     try
     {
         SECURITY_GUARD(JWT_TOKEN(publicKey))
 
-        bool characterNameExists = charactersService->character_name_exists(characterName);
+        bool characterNameExists = co_await charactersService->character_name_exists(characterName);
         auto response = drogon::HttpResponse::newHttpResponse();
 
         if (!characterNameExists)
