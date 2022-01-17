@@ -3,7 +3,7 @@
 #include <include/service/characters/exception/character_not_found_exception.hpp>
 #include "include/database/characters_db.hpp"
 
-Character CharactersDB::get_character(const std::string& userId, const std::string& characterName)
+drogon::Task<Character> CharactersDB::get_character(const std::string& userId, const std::string& characterName)
 {
     auto sql = fmt::format(
             "SELECT * FROM character WHERE user_id = '{}' AND name = '{}';",
@@ -11,21 +11,21 @@ Character CharactersDB::get_character(const std::string& userId, const std::stri
             characterName
     );
 
-    auto rows = postgres->execSqlSync(sql);
+    auto rows = co_await postgres->execSqlCoro(sql);
 
     if (rows.empty())
         throw CharacterNotFoundException(userId);
 
-    return build_character(rows[0]);
+    co_return build_character(rows[0]);
 }
 
-std::vector<Character> CharactersDB::all_characters(const std::string& userId)
+drogon::Task<std::vector<Character>> CharactersDB::all_characters(const std::string& userId)
 {
     auto sql = fmt::format(
             "SELECT * FROM character WHERE user_id = '{}';",
             userId
     );
-    auto rows = postgres->execSqlSync(sql);
+    auto rows = co_await postgres->execSqlCoro(sql);
 
     if (rows.empty())
         throw CharacterNotFoundException(userId);
@@ -35,10 +35,10 @@ std::vector<Character> CharactersDB::all_characters(const std::string& userId)
     for (int i = 0; i < rows.size(); ++i)
         characters[i] = build_character(rows[i]);
 
-    return characters;
+    co_return characters;
 }
 
-void CharactersDB::create_character(const std::string& userId, const Character& character)
+drogon::Task<> CharactersDB::create_character(const std::string& userId, const Character& character)
 {
     auto sql = fmt::format(
             "INSERT INTO character (user_id, name, class) VALUES ('{}', '{}', '{}');",
@@ -46,7 +46,7 @@ void CharactersDB::create_character(const std::string& userId, const Character& 
             character.name,
             character.className
     );
-    postgres->execSqlSync(sql);
+    co_await postgres->execSqlCoro(sql);
 }
 
 void CharactersDB::delete_character(const std::string& userId, const std::string& characterName)
@@ -59,15 +59,15 @@ void CharactersDB::delete_character(const std::string& userId, const std::string
     postgres->execSqlAsyncFuture(sql);
 }
 
-bool CharactersDB::character_name_exists(const std::string& characterName)
+drogon::Task<bool> CharactersDB::character_name_exists(const std::string& characterName)
 {
     auto sql = fmt::format(
             "SELECT * FROM character WHERE name = '{}';",
             characterName
     );
-    auto rows = postgres->execSqlSync(sql);
+    auto rows = co_await postgres->execSqlCoro(sql);
 
-    return !rows.empty();
+    co_return !rows.empty();
 }
 
 void CharactersDB::update_exp(const std::string& characterName, uint32_t exp)

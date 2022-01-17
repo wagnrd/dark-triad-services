@@ -28,15 +28,15 @@ ChallengeSession SessionsDB::createSession(int clientNonce)
     return {sessionId, challenge};
 }
 
-int SessionsDB::findServerNonceBySessionId(const std::string& sessionId)
+drogon::Task<int> SessionsDB::findServerNonceBySessionId(const std::string& sessionId)
 {
     auto command = fmt::format("get {}", sessionId);
-    auto resultOptional = execRedisCommandSync(command);
+    auto redisResult = co_await redis->execCommandCoro(command);
 
-    if (!resultOptional.has_value())
+    if (redisResult.isNil())
         throw SessionNotFoundException(sessionId);
 
-    return std::stoi(resultOptional.value());
+    co_return std::stoi(redisResult.asString());
 }
 
 void SessionsDB::deleteSessionBySessionId(const std::string& sessionId)
@@ -49,30 +49,4 @@ void SessionsDB::deleteSessionBySessionId(const std::string& sessionId)
             },
             command
     );
-}
-
-std::optional<std::string> SessionsDB::execRedisCommandSync(const std::string& command)
-{
-    std::mutex mutex;
-    std::unique_lock<std::mutex> lock(mutex);
-    std::condition_variable commandFinished;
-
-    std::optional<std::string> result;
-
-    redis->execCommandAsync(
-            [&](const drogon::nosql::RedisResult& r) {
-                if (!r.isNil())
-                    result = r.asString();
-
-                commandFinished.notify_all();
-            },
-            [](const std::exception& e) {
-                throw e;
-            },
-            command
-    );
-
-    commandFinished.wait(lock);
-
-    return result;
 }

@@ -2,8 +2,8 @@
 #define DARK_TRIAD_LOGIN_SERVICE_LOGIN_HPP
 
 #include <drogon/HttpController.h>
-#include "../exception_mapper/login_exception_mapper.hpp"
-#include "../../service/login/login_service.hpp"
+#include "include/controller/exception_mapper/login_exception_mapper.hpp"
+#include "include/service/login/login_service.hpp"
 
 namespace public_api
 {
@@ -18,11 +18,11 @@ namespace public_api
             METHOD_ADD(login::get_token, "/token", drogon::Post);
         METHOD_LIST_END
 
-        void challenge(const drogon::HttpRequestPtr& request,
-                       std::function<void(const drogon::HttpResponsePtr&)>&& callback);
+        drogon::Task<> challenge(drogon::HttpRequestPtr request,
+                                 std::function<void(const drogon::HttpResponsePtr&)> callback);
 
-        void get_token(const drogon::HttpRequestPtr& request,
-                       std::function<void(const drogon::HttpResponsePtr&)>&& callback);
+        drogon::Task<> get_token(drogon::HttpRequestPtr request,
+                                 std::function<void(const drogon::HttpResponsePtr&)> callback);
     };
 }
 

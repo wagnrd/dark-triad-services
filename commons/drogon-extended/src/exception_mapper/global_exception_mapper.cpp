@@ -1,4 +1,5 @@
 #include <drogon_extended/exception_mapper/global_exception_mapper.hpp>
+#include "drogon_extended/security/exceptions/unauthorized_exception.hpp"
 
 void GlobalExceptionMapper::handle_global_exceptions(std::function<void()>&& controllerImplementation,
                                                      std::function<void(const drogon::HttpResponsePtr&)>& callback)
@@ -7,7 +8,7 @@ void GlobalExceptionMapper::handle_global_exceptions(std::function<void()>&& con
     {
         controllerImplementation();
     }
-    catch (std::invalid_argument& e)
+    catch (const std::invalid_argument& e)
     {
         LOG_ERROR << e.what();
 
@@ -18,7 +19,18 @@ void GlobalExceptionMapper::handle_global_exceptions(std::function<void()>&& con
         );
         callback(response);
     }
-    catch (std::exception& e)
+    catch (const UnauthorizedException& e)
+    {
+        LOG_ERROR << e.what();
+
+        auto response = build_exception_response(
+                drogon::HttpStatusCode::k401Unauthorized,
+                "Authorization failed",
+                e.what()
+        );
+        callback(response);
+    }
+    catch (const std::exception& e)
     {
         LOG_ERROR << e.what();
 

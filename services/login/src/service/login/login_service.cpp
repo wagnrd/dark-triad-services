@@ -12,10 +12,11 @@ ChallengeSession LoginService::get_challenge_session(int clientNonce)
     return session;
 }
 
-OidcIdToken LoginService::get_token(const ChallengeResponseSession& session, const Credentials& credentials)
+drogon::Task<OidcIdToken> LoginService::get_token(const ChallengeResponseSession& session,
+                                                  const Credentials& credentials)
 {
     LOG_DEBUG << "Looking up session: " << session.id;
-    auto serverNonce = sessionsDB->findServerNonceBySessionId(session.id);
+    auto serverNonce = co_await sessionsDB->findServerNonceBySessionId(session.id);
     LOG_DEBUG << "Found session '" << session.id << "' with serverNonce: " << serverNonce;
 
     LOG_DEBUG << "Deleting session: " << session.id;
@@ -29,5 +30,5 @@ OidcIdToken LoginService::get_token(const ChallengeResponseSession& session, con
     auto oidcIdToken = oidcClient->get_token(credentials);
     LOG_DEBUG << "Fetched id token for user: " << credentials.email;
 
-    return oidcIdToken;
+    co_return oidcIdToken;
 }

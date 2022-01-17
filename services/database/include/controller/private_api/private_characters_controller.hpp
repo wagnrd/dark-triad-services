@@ -2,7 +2,7 @@
 #define DATABASE_API_CHARACTERS_HPP
 
 #include <drogon/HttpController.h>
-#include <drogon_extended/security/security.hpp>
+#include <drogon_extended/security/api_key_guard.hpp>
 
 #include <include/configuration/base_config.hpp>
 #include <include/controller/exception_mapper/characters_exception_mapper.hpp>
@@ -13,6 +13,7 @@ namespace private_api
 
         std::shared_ptr<BaseConfig> config = Configuration<BaseConfig>::get();
         CharactersService* charactersService = CharactersService::get();
+        ApiKeyGuard apiKeyGuard = ApiKeyGuard(config->webServer->apiKey);
         CharactersExceptionMapper exceptionMapper;
 
     public:
@@ -21,15 +22,15 @@ namespace private_api
             METHOD_ADD(characters::update_exp, "/{1}/exp/{2}}", drogon::Put);
         METHOD_LIST_END
 
-        void get_character(const drogon::HttpRequestPtr& request,
-                           std::function<void(const drogon::HttpResponsePtr&)>&& callback,
-                           const std::string& characterName,
-                           const std::string& userId);
+        drogon::Task<> get_character(drogon::HttpRequestPtr request,
+                                     std::function<void(const drogon::HttpResponsePtr&)> callback,
+                                     const std::string& characterName,
+                                     const std::string& userId);
 
-        void update_exp(const drogon::HttpRequestPtr& request,
-                        std::function<void(const drogon::HttpResponsePtr&)>&& callback,
-                        const std::string& characterName,
-                        uint32_t exp);
+        drogon::Task<void> update_exp(drogon::HttpRequestPtr request,
+                                      std::function<void(const drogon::HttpResponsePtr&)> callback,
+                                      const std::string& characterName,
+                                      uint32_t exp);
     };
 }
 

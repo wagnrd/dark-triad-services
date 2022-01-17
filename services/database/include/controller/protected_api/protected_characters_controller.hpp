@@ -1,19 +1,15 @@
 #ifndef DATABASE_API_CHARACTERS_HPP
 #define DATABASE_API_CHARACTERS_HPP
 
-#include <drogon/HttpController.h>
-#include <drogon_extended/security/security.hpp>
+#include <drogon/drogon.h>
 
 #include <include/configuration/base_config.hpp>
 #include <include/controller/exception_mapper/characters_exception_mapper.hpp>
+#include "drogon_extended/security/jwt_token_guard.hpp"
 
 namespace protected_api
 {
     class characters: public drogon::HttpController<characters> {
-
-        std::shared_ptr<BaseConfig> config = Configuration<BaseConfig>::get();
-        CharactersService* charactersService = CharactersService::get();
-        CharactersExceptionMapper exceptionMapper;
 
         std::string publicKey = R"(-----BEGIN CERTIFICATE-----
 MIIDCTCCAfGgAwIBAgIJD1kojIKHKqAIMA0GCSqGSIb3DQEBCwUAMCIxIDAeBgNV
@@ -35,6 +31,11 @@ g7iuK8RlUoWP9DqWKSBMPsR2ECA1ssmFw4HeWqpD+zZssX4CC5au9XdKJTzIHaVX
 P90F2g0l/3qfb8+j5g==
 -----END CERTIFICATE-----)";
 
+        std::shared_ptr<BaseConfig> config = Configuration<BaseConfig>::get();
+        CharactersService* charactersService = CharactersService::get();
+        JwtTokenGuard jwtTokenGuard = JwtTokenGuard(publicKey);
+        CharactersExceptionMapper exceptionMapper;
+
     public:
         METHOD_LIST_BEGIN
             METHOD_ADD(characters::get_all_characters, "", drogon::Get);
@@ -43,19 +44,19 @@ P90F2g0l/3qfb8+j5g==
             METHOD_ADD(characters::character_name_exists, "/{1}/exists", drogon::Get);
         METHOD_LIST_END
 
-        void get_all_characters(const drogon::HttpRequestPtr& request,
-                                std::function<void(const drogon::HttpResponsePtr&)>&& callback);
+        drogon::Task<> get_all_characters(const drogon::HttpRequestPtr request,
+                                          std::function<void(const drogon::HttpResponsePtr&)> callback);
 
-        void create_character(const drogon::HttpRequestPtr& request,
-                              std::function<void(const drogon::HttpResponsePtr&)>&& callback);
+        drogon::Task<> create_character(drogon::HttpRequestPtr request,
+                                        std::function<void(const drogon::HttpResponsePtr&)> callback);
 
-        void delete_character(const drogon::HttpRequestPtr& request,
-                              std::function<void(const drogon::HttpResponsePtr&)>&& callback,
-                              const std::string& characterName);
+        drogon::Task<> delete_character(drogon::HttpRequestPtr request,
+                                        std::function<void(const drogon::HttpResponsePtr&)> callback,
+                                        const std::string& characterName);
 
-        void character_name_exists(const drogon::HttpRequestPtr& request,
-                                   std::function<void(const drogon::HttpResponsePtr&)>&& callback,
-                                   const std::string& characterName);
+        drogon::Task<> character_name_exists(drogon::HttpRequestPtr request,
+                                             std::function<void(const drogon::HttpResponsePtr&)> callback,
+                                             const std::string& characterName);
     };
 }
 

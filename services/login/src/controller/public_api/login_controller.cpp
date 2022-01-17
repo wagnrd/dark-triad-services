@@ -1,5 +1,3 @@
-#include <random>
-
 #include <drogon_extended/configuration/configuration.hpp>
 #include <drogon_extended/exception_mapper/exception_mapper_macros.hpp>
 #include <drogon_extended/json_mapper/json_converter.hpp>
@@ -9,8 +7,8 @@
 #include <include/controller/factory/challenge_response_session_factory.hpp>
 #include <include/controller/factory/credentials_factory.hpp>
 
-void public_api::login::challenge(const drogon::HttpRequestPtr& request,
-                                  std::function<void(const drogon::HttpResponsePtr&)>&& callback)
+drogon::Task<> public_api::login::challenge(drogon::HttpRequestPtr request,
+                                            std::function<void(const drogon::HttpResponsePtr&)> callback)
 {
     try
     {
@@ -27,10 +25,12 @@ void public_api::login::challenge(const drogon::HttpRequestPtr& request,
     {
         HANDLE_CUSTOM_EXCEPTIONS(loginExceptionMapper)
     }
+
+    co_return;
 }
 
-void public_api::login::get_token(const drogon::HttpRequestPtr& request,
-                                  std::function<void(const drogon::HttpResponsePtr&)>&& callback)
+drogon::Task<> public_api::login::get_token(drogon::HttpRequestPtr request,
+                                            std::function<void(const drogon::HttpResponsePtr&)> callback)
 {
     try
     {
@@ -38,7 +38,7 @@ void public_api::login::get_token(const drogon::HttpRequestPtr& request,
         auto challengeResponseSession = ChallengeResponseSessionFactory::from_json(jsonPtr);
         auto credentials = CredentialsFactory::from_json(jsonPtr);
 
-        auto oidcIdToken = loginService->get_token(challengeResponseSession, credentials);
+        auto oidcIdToken = co_await loginService->get_token(challengeResponseSession, credentials);
 
         Json::Value responseJson;
         responseJson["id_token"] = oidcIdToken.idToken;
@@ -51,6 +51,8 @@ void public_api::login::get_token(const drogon::HttpRequestPtr& request,
     {
         HANDLE_CUSTOM_EXCEPTIONS(loginExceptionMapper)
     }
+
+    co_return;
 }
 
 

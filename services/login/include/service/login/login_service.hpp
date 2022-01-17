@@ -19,7 +19,7 @@ class LoginService: public Service<LoginService> {
 
 public:
     ChallengeSession get_challenge_session(int clientNonce);
-    OidcIdToken get_token(const ChallengeResponseSession& session, const Credentials& credentials);
+    drogon::Task<OidcIdToken> get_token(const ChallengeResponseSession& session, const Credentials& credentials);
 };
 
 #endif //DARK_TRIAD_LOGIN_SERVICE_LOGIN_SERVICE_HPP

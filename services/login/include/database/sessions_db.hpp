@@ -1,10 +1,6 @@
 #ifndef DARK_TRIAD_LOGIN_SERVICE_SESSIONS_DB_HPP
 #define DARK_TRIAD_LOGIN_SERVICE_SESSIONS_DB_HPP
 
-#include <string>
-#include <mutex>
-#include <unordered_map>
-
 #include <drogon/drogon.h>
 #include <drogon_extended/service/service.hpp>
 
@@ -16,11 +12,8 @@ class SessionsDB: public Service<SessionsDB> {
 
 public:
     ChallengeSession createSession(int clientNonce);
-    int findServerNonceBySessionId(const std::string& sessionId);
+    drogon::Task<int> findServerNonceBySessionId(const std::string& sessionId);
     void deleteSessionBySessionId(const std::string& sessionId);
-
-private:
-    std::optional<std::string> execRedisCommandSync(const std::string& command);
 };
 
 #endif //DARK_TRIAD_LOGIN_SERVICE_SESSIONS_DB_HPP
