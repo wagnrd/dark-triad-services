@@ -1,14 +1,18 @@
 #include <drogon_extended/json_mapper/json_converter.hpp>
 
 #include <include/converter/character_converter.hpp>
+#include <include/converter/appearance_converter.hpp>
 
 Character CharacterConverter::from_json(const std::shared_ptr<Json::Value>& json)
 {
-    auto name = JsonConverter::check(json, "name").asString();
-    auto className = JsonConverter::check(json, "className").asString();
-    auto exp = json->get("exp", 0).asUInt();
+    Character character;
+    character.name = JsonConverter::check(json, "name").asString();
+    character.className = JsonConverter::check(json, "className").asString();
+    character.exp = json->get("exp", 0).asUInt();
+    const auto& appearanceJson = JsonConverter::check(json, "appearance");
+    character.appearance = AppearanceConverter::from_json(appearanceJson);
 
-    return Character(std::move(name), std::move(className), exp);
+    return character;
 }
 
 std::shared_ptr<Json::Value> CharacterConverter::to_json(const Character& character)
@@ -17,6 +21,7 @@ std::shared_ptr<Json::Value> CharacterConverter::to_json(const Character& charac
     (*json)["name"] = character.name;
     (*json)["className"] = character.className;
     (*json)["exp"] = character.exp;
+    (*json)["appearance"] = *AppearanceConverter::to_json(character.appearance);
 
     return json;
 }

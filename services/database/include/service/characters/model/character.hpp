@@ -3,20 +3,24 @@
 
 #include <string>
 #include <utility>
+
 #include "character_class.hpp"
+#include "appearance.hpp"
 
 class Character {
 public:
     std::string name{};
     std::string className{};
     uint32_t exp{};
+    Appearance appearance{};
 
     Character() = default;
 
-    explicit Character(std::string name, std::string className, uint32_t exp)
+    explicit Character(std::string name, std::string className, uint32_t exp, Appearance appearance)
             : name(std::move(name)),
               className(std::move(className)),
-              exp(exp)
+              exp(exp),
+              appearance(std::move(appearance))
     {}
 };
 
