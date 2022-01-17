@@ -1,4 +1,3 @@
-#include "jwt-cpp/jwt.h"
 #include "trantor/utils/Logger.h"
 
 #include "include/drogon_extended/security/exceptions/unauthorized_exception.hpp"
