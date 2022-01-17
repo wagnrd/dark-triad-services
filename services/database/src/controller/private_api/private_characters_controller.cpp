@@ -11,7 +11,7 @@ drogon::Task<> private_api::characters::get_character(drogon::HttpRequestPtr req
 {
     try
     {
-        SECURITY_GUARD(API_KEY(config->webServer->apiKey))
+        apiKeyGuard.check(request);
 
         auto character = co_await charactersService->get_character(userId, characterName);
         auto responseJson = CharacterConverter::to_json(character);
@@ -21,6 +21,8 @@ drogon::Task<> private_api::characters::get_character(drogon::HttpRequestPtr req
     {
         HANDLE_CUSTOM_EXCEPTIONS(exceptionMapper)
     }
+
+    co_return;
 }
 
 drogon::Task<void> private_api::characters::update_exp(drogon::HttpRequestPtr request,
@@ -29,7 +31,7 @@ drogon::Task<void> private_api::characters::update_exp(drogon::HttpRequestPtr re
 {
     try
     {
-        SECURITY_GUARD(API_KEY(config->webServer->apiKey))
+        apiKeyGuard.check(request);
 
         charactersService->update_exp(characterName, exp);
 
@@ -41,5 +43,7 @@ drogon::Task<void> private_api::characters::update_exp(drogon::HttpRequestPtr re
     {
         HANDLE_CUSTOM_EXCEPTIONS(exceptionMapper)
     }
+
+    co_return;
 }
 

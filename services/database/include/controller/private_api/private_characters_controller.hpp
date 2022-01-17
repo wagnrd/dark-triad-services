@@ -2,7 +2,7 @@
 #define DATABASE_API_CHARACTERS_HPP
 
 #include <drogon/HttpController.h>
-#include <drogon_extended/security/security.hpp>
+#include <drogon_extended/security/api_key_guard.hpp>
 
 #include <include/configuration/base_config.hpp>
 #include <include/controller/exception_mapper/characters_exception_mapper.hpp>
@@ -13,6 +13,7 @@ namespace private_api
 
         std::shared_ptr<BaseConfig> config = Configuration<BaseConfig>::get();
         CharactersService* charactersService = CharactersService::get();
+        ApiKeyGuard apiKeyGuard = ApiKeyGuard(config->webServer->apiKey);
         CharactersExceptionMapper exceptionMapper;
 
     public:

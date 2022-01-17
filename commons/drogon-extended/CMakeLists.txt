@@ -13,7 +13,7 @@ add_library(
 
         ${INCLUDES}
         ${SOURCES}
-)
+        src/security/jwt_token_guard.cpp include/drogon_extended/security/jwt_token_guard.hpp src/security/api_key_guard.cpp include/drogon_extended/security/api_key_guard.hpp)
 
 # Drogon (web service framework)
 add_subdirectory("lib/drogon")

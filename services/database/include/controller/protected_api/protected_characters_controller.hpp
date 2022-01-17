@@ -2,18 +2,14 @@
 #define DATABASE_API_CHARACTERS_HPP
 
 #include <drogon/drogon.h>
-#include <drogon_extended/security/security.hpp>
 
 #include <include/configuration/base_config.hpp>
 #include <include/controller/exception_mapper/characters_exception_mapper.hpp>
+#include "drogon_extended/security/jwt_token_guard.hpp"
 
 namespace protected_api
 {
     class characters: public drogon::HttpController<characters> {
-
-        std::shared_ptr<BaseConfig> config = Configuration<BaseConfig>::get();
-        CharactersService* charactersService = CharactersService::get();
-        CharactersExceptionMapper exceptionMapper;
 
         std::string publicKey = R"(-----BEGIN CERTIFICATE-----
 MIIDCTCCAfGgAwIBAgIJD1kojIKHKqAIMA0GCSqGSIb3DQEBCwUAMCIxIDAeBgNV
@@ -34,6 +30,11 @@ g7iuK8RlUoWP9DqWKSBMPsR2ECA1ssmFw4HeWqpD+zZssX4CC5au9XdKJTzIHaVX
 8LBCZ5lcQ5p5LPcGwC2rjmE0jedjidaTKyAWl/a6xWtqS+vSc5CFIZo8+1cGuC/2
 P90F2g0l/3qfb8+j5g==
 -----END CERTIFICATE-----)";
+
+        std::shared_ptr<BaseConfig> config = Configuration<BaseConfig>::get();
+        CharactersService* charactersService = CharactersService::get();
+        JwtTokenGuard jwtTokenGuard = JwtTokenGuard(publicKey);
+        CharactersExceptionMapper exceptionMapper;
 
     public:
         METHOD_LIST_BEGIN

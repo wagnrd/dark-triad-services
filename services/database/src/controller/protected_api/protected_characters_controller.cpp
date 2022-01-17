@@ -11,7 +11,7 @@ drogon::Task<> protected_api::characters::get_all_characters(const drogon::HttpR
 {
     try
     {
-        SECURITY_GUARD(JWT_TOKEN(publicKey))
+        auto decodedJwtToken = jwtTokenGuard.check(request);
 
         std::string userId = decodedJwtToken.get_payload_claim("email")
                                             .as_string();
@@ -32,6 +32,8 @@ drogon::Task<> protected_api::characters::get_all_characters(const drogon::HttpR
     {
         HANDLE_CUSTOM_EXCEPTIONS(exceptionMapper)
     }
+
+    co_return;
 }
 
 drogon::Task<> protected_api::characters::create_character(drogon::HttpRequestPtr request,
@@ -40,7 +42,7 @@ drogon::Task<> protected_api::characters::create_character(drogon::HttpRequestPt
 {
     try
     {
-        SECURITY_GUARD(JWT_TOKEN(publicKey))
+        auto decodedJwtToken = jwtTokenGuard.check(request);
 
         auto character = CharacterConverter::from_json(request->jsonObject());
 
@@ -56,6 +58,8 @@ drogon::Task<> protected_api::characters::create_character(drogon::HttpRequestPt
     {
         HANDLE_CUSTOM_EXCEPTIONS(exceptionMapper)
     }
+
+    co_return;
 }
 
 drogon::Task<> protected_api::characters::delete_character(drogon::HttpRequestPtr request,
@@ -64,7 +68,7 @@ drogon::Task<> protected_api::characters::delete_character(drogon::HttpRequestPt
 {
     try
     {
-        SECURITY_GUARD(JWT_TOKEN(publicKey))
+        auto decodedJwtToken = jwtTokenGuard.check(request);
 
         std::string userId = decodedJwtToken.get_payload_claim("email")
                                             .as_string();
@@ -78,6 +82,8 @@ drogon::Task<> protected_api::characters::delete_character(drogon::HttpRequestPt
     {
         HANDLE_GLOBAL_EXCEPTIONS
     }
+
+    co_return;
 }
 
 drogon::Task<> protected_api::characters::character_name_exists(drogon::HttpRequestPtr request,
@@ -87,7 +93,7 @@ drogon::Task<> protected_api::characters::character_name_exists(drogon::HttpRequ
 {
     try
     {
-        SECURITY_GUARD(JWT_TOKEN(publicKey))
+        jwtTokenGuard.check(request);
 
         bool characterNameExists = co_await charactersService->character_name_exists(characterName);
         auto response = drogon::HttpResponse::newHttpResponse();
@@ -101,5 +107,7 @@ drogon::Task<> protected_api::characters::character_name_exists(drogon::HttpRequ
     {
         HANDLE_CUSTOM_EXCEPTIONS(exceptionMapper)
     }
+
+    co_return;
 }
 

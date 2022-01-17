@@ -2,17 +2,17 @@
 
 drogon::Task<Character> CharactersService::get_character(const std::string& userId, const std::string& characterName)
 {
-    return charactersDb->get_character(userId, characterName);
+    co_return co_await charactersDb->get_character(userId, characterName);
 }
 
 drogon::Task<std::vector<Character>> CharactersService::all_characters(const std::string& userId)
 {
-    return charactersDb->all_characters(userId);
+    co_return co_await charactersDb->all_characters(userId);
 }
 
 drogon::Task<> CharactersService::create_character(const std::string& userId, const Character& character)
 {
-    charactersDb->create_character(userId, character);
+    co_return co_await charactersDb->create_character(userId, character);
 }
 
 void CharactersService::delete_character(const std::string& userId, const std::string& characterName)
@@ -22,7 +22,7 @@ void CharactersService::delete_character(const std::string& userId, const std::s
 
 drogon::Task<bool> CharactersService::character_name_exists(const std::string& characterName)
 {
-    return charactersDb->character_name_exists(characterName);
+    co_return co_await charactersDb->character_name_exists(characterName);
 }
 
 void CharactersService::update_exp(const std::string& characterName, uint32_t exp)
