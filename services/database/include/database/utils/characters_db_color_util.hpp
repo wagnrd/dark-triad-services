@@ -1,11 +1,11 @@
-#ifndef DARK_TRIAD_SERVICES_CHARACTERS_DB_COLOR_UTILS_HPP
-#define DARK_TRIAD_SERVICES_CHARACTERS_DB_COLOR_UTILS_HPP
+#ifndef DARK_TRIAD_SERVICES_CHARACTERS_DB_COLOR_UTIL_HPP
+#define DARK_TRIAD_SERVICES_CHARACTERS_DB_COLOR_UTIL_HPP
 
 #include <cstdint>
 
 #include "include/service/characters/model/color.hpp"
 
-class CharactersDBColorUtils {
+class CharactersDBColorUtil {
 public:
     static int encode_color(const Color& color);
     static Color decode_color(int encodedColor);
@@ -13,4 +13,4 @@ public:
     static double convert_int_color_to_double(int color);
 };
 
-#endif //DARK_TRIAD_SERVICES_CHARACTERS_DB_COLOR_UTILS_HPP
+#endif //DARK_TRIAD_SERVICES_CHARACTERS_DB_COLOR_UTIL_HPP

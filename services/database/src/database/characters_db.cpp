@@ -2,7 +2,7 @@
 
 #include <include/service/characters/exception/character_not_found_exception.hpp>
 #include "include/database/characters_db.hpp"
-#include "include/database/utils/characters_db_color_utils.hpp"
+#include "include/database/utils/characters_db_color_util.hpp"
 
 drogon::Task<Character> CharactersDB::get_character(const std::string& userId, const std::string& characterName)
 {
@@ -43,11 +43,11 @@ drogon::Task<std::vector<Character>> CharactersDB::all_characters(const std::str
 
 drogon::Task<> CharactersDB::create_character(const std::string& userId, const Character& character)
 {
-    auto encodedSkinColor = CharactersDBColorUtils::encode_color(character.appearance.skinColor);
-    auto encodedEyeColor = CharactersDBColorUtils::encode_color(character.appearance.eyeColor);
-    auto encodedScarColor = CharactersDBColorUtils::encode_color(character.appearance.scarColor);
-    auto encodedTattooColor = CharactersDBColorUtils::encode_color(character.appearance.tattooColor);
-    auto encodedHairColor = CharactersDBColorUtils::encode_color(character.appearance.hairColor);
+    auto encodedSkinColor = CharactersDBColorUtil::encode_color(character.appearance.skinColor);
+    auto encodedEyeColor = CharactersDBColorUtil::encode_color(character.appearance.eyeColor);
+    auto encodedScarColor = CharactersDBColorUtil::encode_color(character.appearance.scarColor);
+    auto encodedTattooColor = CharactersDBColorUtil::encode_color(character.appearance.tattooColor);
+    auto encodedHairColor = CharactersDBColorUtil::encode_color(character.appearance.hairColor);
 
     auto sql = fmt::format(
             R"( WITH tmp AS (
@@ -122,11 +122,11 @@ Character CharactersDB::build_character(const drogon::orm::Row& row)
                     .hairId = row["hair_id"].as<int>(),
                     .eyebrowsId = row["eyebrows_id"].as<int>(),
                     .facialHairId = row["facial_hair_id"].as<int>(),
-                    .skinColor = CharactersDBColorUtils::decode_color(row["skin_color"].as<int>()),
-                    .eyeColor = CharactersDBColorUtils::decode_color(row["eye_color"].as<int>()),
-                    .scarColor = CharactersDBColorUtils::decode_color(row["scar_color"].as<int>()),
-                    .tattooColor = CharactersDBColorUtils::decode_color(row["tattoo_color"].as<int>()),
-                    .hairColor = CharactersDBColorUtils::decode_color(row["hair_color"].as<int>())
+                    .skinColor = CharactersDBColorUtil::decode_color(row["skin_color"].as<int>()),
+                    .eyeColor = CharactersDBColorUtil::decode_color(row["eye_color"].as<int>()),
+                    .scarColor = CharactersDBColorUtil::decode_color(row["scar_color"].as<int>()),
+                    .tattooColor = CharactersDBColorUtil::decode_color(row["tattoo_color"].as<int>()),
+                    .hairColor = CharactersDBColorUtil::decode_color(row["hair_color"].as<int>())
             }
     };
 }

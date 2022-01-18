@@ -1,7 +1,7 @@
 #include <cmath>
-#include "include/database/utils/characters_db_color_utils.hpp"
+#include "include/database/utils/characters_db_color_util.hpp"
 
-int CharactersDBColorUtils::encode_color(const Color& color)
+int CharactersDBColorUtil::encode_color(const Color& color)
 {
     int ri = convert_double_color_to_int(color.r) & 0xFF;
     int gi = convert_double_color_to_int(color.g) & 0xFF;
@@ -11,7 +11,7 @@ int CharactersDBColorUtils::encode_color(const Color& color)
     return (ri << 24) | (gi << 16) | (bi << 8) | (ai);
 }
 
-Color CharactersDBColorUtils::decode_color(int encodedColor)
+Color CharactersDBColorUtil::decode_color(int encodedColor)
 {
     int ri = encodedColor >> 24 & 0xFF;
     int gi = encodedColor >> 16 & 0xFF;
@@ -26,12 +26,12 @@ Color CharactersDBColorUtils::decode_color(int encodedColor)
     };
 }
 
-int CharactersDBColorUtils::convert_double_color_to_int(double color)
+int CharactersDBColorUtil::convert_double_color_to_int(double color)
 {
     return std::max(0, std::min(255, static_cast<int>(std::floor(color * 256.0))));
 }
 
-double CharactersDBColorUtils::convert_int_color_to_double(int color)
+double CharactersDBColorUtil::convert_int_color_to_double(int color)
 {
     return color / 255.0;
 }

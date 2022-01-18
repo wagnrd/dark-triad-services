@@ -4,7 +4,6 @@
 #include <string>
 #include <utility>
 
-#include "character_class.hpp"
 #include "appearance.hpp"
 
 class Character {
