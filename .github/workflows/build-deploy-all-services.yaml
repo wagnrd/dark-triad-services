@@ -16,6 +16,9 @@ jobs:
           fetch-depth: 1
 
       - name: Install prerequisite packages for building
+        uses: egor-tensin/setup-gcc@v1
+        with:
+          version: 11
         run: |
           sudo apt-get update
           sudo apt-get install \
