@@ -13,8 +13,10 @@ ENV POSTGRES_PASSWORD $postgres_password
 COPY cmake-build-release /build
 COPY config.json /config.json
 
+RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test
 RUN apt-get update -y
-RUN apt-get install libjsoncpp1 \
+RUN apt-get install libstdc++-11-dev \
+                    libjsoncpp1 \
                     libc-ares2 \
                     libpq5 \
                     libhiredis0.14 -y
