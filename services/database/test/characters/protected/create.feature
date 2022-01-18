@@ -5,34 +5,36 @@ Feature: Create characters
     * def login = call read('../../login/login.feature') { email: 'test1@test.com', password: 'Test1234' }
     * def authorization = login.token
     * configure headers = { Authorization: '#(authorization)' }
+    * def defaultColor = { r: 0.0, g: 0.0, b: 0.0, a: 0.0 }
+    * def defaultAppearance = { gender: 'f', height: 1.0, faceId: 0, earsId: 0, eyebrowsId: 0, facialHairId: 0, hairId: 0, skinColor: #(defaultColor), eyeColor: #(defaultColor), scarColor: #(defaultColor), tattooColor: #(defaultColor), hairColor: #(defaultColor) }
 
   Scenario Outline: Create character with every valid class
 
     Given path 'protected_api/characters'
-    And request { name: '<characterName>', className: '<characterClass>' }
+    And request { name: '<characterName>', className: '<characterClass>', appearance: #(defaultAppearance) }
     When method post
     Then status 201
 
     Given path 'protected_api/characters'
     When method get
     Then status 200
-    And match response == { characters: [ { name: '<characterName>', className: '<characterClass>', exp: 0 } ] }
+    And match response == { characters: [ { name: '<characterName>', className: '<characterClass>', exp: 0, appearance: #(defaultAppearance) } ] }
 
     Given path 'protected_api/characters/<characterName>'
     When method delete
     Then status 204
 
     Examples:
-      | characterName      | characterClass |
-      | DbApiTestCharacter | Wizard         |
-      | DbApiTestCharacter | Archer         |
-      | DbApiTestCharacter | Warrior        |
-      | DbApiTestCharacter | Rogue          |
+      | characterName             | characterClass |
+      | AlmostTooLongTestName1234 | Wizard         |
+      | DbApiTestCharacter        | Archer         |
+      | DbApiTestCharacter        | Warrior        |
+      | DbApiTestCharacter        | Rogue          |
 
   Scenario Outline: Get an error when trying to create a character with an invalid class
 
     Given path 'protected_api/characters'
-    And request { name: '<characterName>', className: '<characterClass>', exp: 0 }
+    And request { name: '<characterName>', className: '<invalidCharacterClass>', appearance: #(defaultAppearance) }
     When method post
     Then status 400
 
@@ -41,26 +43,26 @@ Feature: Create characters
     Then status 404
 
     Examples:
-      | characterName      | characterClass |
-      | DbApiTestCharacter | wonky          |
-      | DbApiTestCharacter | stillWonky     |
+      | characterName      | invalidCharacterClass |
+      | DbApiTestCharacter | wonky                 |
+      | DbApiTestCharacter | stillWonky            |
 
   Scenario Outline: Get an error when trying to create characters with the same name
 
     Given path 'protected_api/characters'
-    And request { name: '<characterName>', className: '<characterClass1>' }
+    And request { name: '<characterName>', className: '<characterClass1>', appearance: #(defaultAppearance) }
     When method post
     Then status 201
 
     Given path 'protected_api/characters'
-    And request { name: '<characterName>', className: '<characterClass2>' }
+    And request { name: '<characterName>', className: '<characterClass2>', appearance: #(defaultAppearance) }
     When method post
     Then status 400
 
     Given path 'protected_api/characters'
     When method get
     Then status 200
-    And match response == { characters: [ { name: '<characterName>', className: '<characterClass1>', exp: 0 } ] }
+    And match response == { characters: [ { name: '<characterName>', className: '<characterClass1>', exp: 0, appearance: #(defaultAppearance) } ] }
 
     Given path 'protected_api/characters/<characterName>'
     When method delete
@@ -77,19 +79,19 @@ Feature: Create characters
     Then status 404
 
     Given path 'protected_api/characters'
-    And request { name: '<characterName1>', className: '<characterClass1>' }
+    And request { name: '<characterName1>', className: '<characterClass1>', appearance: #(defaultAppearance) }
     When method post
     Then status 201
 
     Given path 'protected_api/characters'
-    And request { name: '<characterName2>', className: '<characterClass2>' }
+    And request { name: '<characterName2>', className: '<characterClass2>', appearance: #(defaultAppearance) }
     When method post
     Then status 201
 
     Given path 'protected_api/characters'
     When method get
     Then status 200
-    And match response == { characters: [ { name: '<characterName1>', className: '<characterClass1>', exp: 0 }, { name: '<characterName2>', className: '<characterClass2>', exp: 0 } ] }
+    And match response == { characters: [ { name: '<characterName1>', className: '<characterClass1>', exp: 0, appearance: #(defaultAppearance) }, { name: '<characterName2>', className: '<characterClass2>', exp: 0, appearance: #(defaultAppearance) } ] }
 
     Given path 'protected_api/characters/<characterName1>'
     When method delete
@@ -113,3 +115,40 @@ Feature: Create characters
     Given path 'protected_api/characters'
     When method get
     Then status 404
+
+  Scenario Outline: Custom experience points should be reset when creating a character
+
+    Given path 'protected_api/characters'
+    And request { name: '<characterName>', className: '<characterClass>', exp: <customExp>, appearance: #(defaultAppearance) }
+    When method post
+    Then status 201
+
+    Given path 'protected_api/characters'
+    When method get
+    Then status 200
+    And match response == { characters: [ { name: '<characterName>', className: '<characterClass>', exp: <resetExp>, appearance: #(defaultAppearance) } ] }
+
+    Given path 'protected_api/characters/<characterName>'
+    When method delete
+    Then status 204
+
+    Examples:
+      | characterName      | characterClass | customExp | resetExp |
+      | DbApiTestCharacter | Wizard         | 9999      | 0        |
+      | DbApiTestCharacter | Wizard         | 1111      | 0        |
+
+  Scenario Outline: Get an error when trying to create a character with a character name longer than 25 characters
+
+    Given path 'protected_api/characters'
+    And request { name: '<characterName>', className: '<characterClass>', appearance: #(defaultAppearance) }
+    When method post
+    Then status 400
+
+    Given path 'protected_api/characters'
+    When method get
+    Then status 404
+
+    Examples:
+      | characterName                  | characterClass |
+      | ACharacterNameWaaaaaaayTooLong | Wizard         |
+      | ACharacterNameOnEdge123456     | Wizard         |

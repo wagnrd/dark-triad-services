@@ -5,6 +5,8 @@ Feature: Character name availability
     * def login = call read('../../login/login.feature') { email: 'test1@test.com', password: 'Test1234' }
     * def authorization = login.token
     * configure headers = { Authorization: '#(authorization)' }
+    * def defaultColor = { r: 0.0, g: 0.0, b: 0.0, a: 0.0 }
+    * def defaultAppearance = { gender: 'f', height: 1.0, faceId: 0, earsId: 0, eyebrowsId: 0, facialHairId: 0, hairId: 0, skinColor: #(defaultColor), eyeColor: #(defaultColor), scarColor: #(defaultColor), tattooColor: #(defaultColor), hairColor: #(defaultColor) }
 
   Scenario Outline: Check if character name does not already exist and create a character with the given name
 
@@ -13,7 +15,7 @@ Feature: Character name availability
     Then status 404
 
     Given path 'protected_api/characters'
-    And request { name: '<characterName>', className: '<characterClass>' }
+    And request { name: '<characterName>', className: '<characterClass>', appearance: #(defaultAppearance) }
     When method post
     Then status 201
 
