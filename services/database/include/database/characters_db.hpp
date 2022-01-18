@@ -18,6 +18,7 @@ public:
     void update_exp(const std::string& characterName, uint32_t exp);
 
     drogon::Task<bool> character_name_exists(const std::string& characterName);
+
 private:
     Character build_character(const drogon::orm::Row& row);
 };

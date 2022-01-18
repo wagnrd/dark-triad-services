@@ -14,11 +14,11 @@ Appearance AppearanceConverter::from_json(const Json::Value& json)
     Appearance appearance;
     appearance.gender = JsonConverter::check(json, "gender").asString();
     appearance.height = JsonConverter::check(json, "height").asDouble();
-    appearance.faceId = JsonConverter::check(json, "faceId").asDouble();
-    appearance.earsId = JsonConverter::check(json, "earsId").asDouble();
-    appearance.hairId = JsonConverter::check(json, "hairId").asDouble();
-    appearance.eyebrowsId = JsonConverter::check(json, "eyebrowsId").asDouble();
-    appearance.facialHairId = JsonConverter::check(json, "facialHairId").asDouble();
+    appearance.faceId = JsonConverter::check(json, "faceId").asInt();
+    appearance.earsId = JsonConverter::check(json, "earsId").asInt();
+    appearance.hairId = JsonConverter::check(json, "hairId").asInt();
+    appearance.eyebrowsId = JsonConverter::check(json, "eyebrowsId").asInt();
+    appearance.facialHairId = JsonConverter::check(json, "facialHairId").asInt();
     const auto& skinColorJson = JsonConverter::check(json, "skinColor");
     appearance.skinColor = ColorConverter::from_json(skinColorJson);
     const auto& eyeColorJson = JsonConverter::check(json, "eyeColor");

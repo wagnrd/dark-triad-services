@@ -2,6 +2,7 @@
 
 #include <include/service/characters/exception/character_not_found_exception.hpp>
 #include "include/database/characters_db.hpp"
+#include "include/database/utils/characters_db_utils.hpp"
 
 drogon::Task<Character> CharactersDB::get_character(const std::string& userId, const std::string& characterName)
 {
@@ -40,6 +41,12 @@ drogon::Task<std::vector<Character>> CharactersDB::all_characters(const std::str
 
 drogon::Task<> CharactersDB::create_character(const std::string& userId, const Character& character)
 {
+    auto encodedSkinColor = CharactersDBUtils::encode_color(character.appearance.skinColor);
+    auto encodedEyeColor = CharactersDBUtils::encode_color(character.appearance.eyeColor);
+    auto encodedScarColor = CharactersDBUtils::encode_color(character.appearance.scarColor);
+    auto encodedTattooColor = CharactersDBUtils::encode_color(character.appearance.tattooColor);
+    auto encodedHairColor = CharactersDBUtils::encode_color(character.appearance.hairColor);
+
     auto sql = fmt::format(
             "INSERT INTO character (user_id, name, class) VALUES ('{}', '{}', '{}');",
             userId,
@@ -82,10 +89,24 @@ void CharactersDB::update_exp(const std::string& characterName, uint32_t exp)
 
 Character CharactersDB::build_character(const drogon::orm::Row& row)
 {
-    return Character(
-            row["name"].c_str(),
-            row["class"].c_str(),
-            row["exp"].as<uint32_t>()
-    );
+    return Character{
+            .name = row["name"].c_str(),
+            .className = row["class"].c_str(),
+            .exp = row["exp"].as<uint32_t>(),
+            .appearance{
+                    .gender = row["gender"].c_str(),
+                    .height = row["height"].as<double>(),
+                    .faceId = row["face_id"].as<int>(),
+                    .earsId = row["ears_id"].as<int>(),
+                    .hairId = row["hair_id"].as<int>(),
+                    .eyebrowsId = row["eyebrows_id"].as<int>(),
+                    .facialHairId = row["facial_hair_id"].as<int>(),
+                    .skinColor = CharactersDBUtils::decode_color(row["skin_color"].as<int>()),
+                    .eyeColor = CharactersDBUtils::decode_color(row["eye_color"].as<int>()),
+                    .scarColor = CharactersDBUtils::decode_color(row["scar_color"].as<int>()),
+                    .tattooColor = CharactersDBUtils::decode_color(row["tattoo_color"].as<int>()),
+                    .hairColor = CharactersDBUtils::decode_color(row["hair_color"].as<int>())
+            }
+    };
 }
 

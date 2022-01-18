@@ -13,15 +13,6 @@ public:
     std::string className{};
     uint32_t exp{};
     Appearance appearance{};
-
-    Character() = default;
-
-    explicit Character(std::string name, std::string className, uint32_t exp, Appearance appearance)
-            : name(std::move(name)),
-              className(std::move(className)),
-              exp(exp),
-              appearance(std::move(appearance))
-    {}
 };
 
 #endif //DATABASE_API_CHARACTER_HPP

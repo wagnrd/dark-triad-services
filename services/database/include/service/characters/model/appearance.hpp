@@ -7,11 +7,11 @@ class Appearance {
 public:
     std::string gender;
     double height{};
-    double faceId{};
-    double earsId{};
-    double hairId{};
-    double eyebrowsId{};
-    double facialHairId{};
+    int faceId{};
+    int earsId{};
+    int hairId{};
+    int eyebrowsId{};
+    int facialHairId{};
     Color skinColor{};
     Color eyeColor{};
     Color scarColor{};
