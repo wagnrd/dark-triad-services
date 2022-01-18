@@ -4,9 +4,9 @@
 
 CREATE TABLE public."character"
 (
-    user_id text            NOT NULL,
-    "name"  varchar(50)     NOT NULL,
-    "class" character_class NOT NULL,
+    user_id text NOT NULL,
+    "name"  text NOT NULL,
+    "class" text NOT NULL,
     "exp"   int8 NULL DEFAULT 0,
     CONSTRAINT character_pk PRIMARY KEY (name)
 );
