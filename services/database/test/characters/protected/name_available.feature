@@ -27,4 +27,4 @@ Feature: Character name availability
 
     Examples:
       | characterName      | characterClass |
-      | DbApiTestCharacter | wizard         |
+      | DbApiTestCharacter | Wizard         |

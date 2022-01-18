@@ -31,5 +31,5 @@ Feature: Character management happy cases
 
     Examples:
       | userId         | characterName      | characterClass | exp        |
-      | test1@test.com | DbApiTestCharacter | warrior        | 100        |
-      | test1@test.com | DbApiTestCharacter | warrior        | 2000000000 |
+      | test1@test.com | DbApiTestCharacter | Warrior        | 100        |
+      | test1@test.com | DbApiTestCharacter | Warrior        | 2000000000 |

@@ -24,10 +24,10 @@ Feature: Create characters
 
     Examples:
       | characterName      | characterClass |
-      | DbApiTestCharacter | wizard         |
-      | DbApiTestCharacter | archer         |
-      | DbApiTestCharacter | warrior        |
-      | DbApiTestCharacter | rogue          |
+      | DbApiTestCharacter | Wizard         |
+      | DbApiTestCharacter | Archer         |
+      | DbApiTestCharacter | Warrior        |
+      | DbApiTestCharacter | Rogue          |
 
   Scenario Outline: Get an error when trying to create a character with an invalid class
 
@@ -68,7 +68,7 @@ Feature: Create characters
 
     Examples:
       | characterName      | characterClass1 | characterClass2 |
-      | DbApiTestCharacter | wizard          | archer          |
+      | DbApiTestCharacter | Wizard          | Archer          |
 
   Scenario Outline: Create multiple characters
 
@@ -101,7 +101,7 @@ Feature: Create characters
 
     Examples:
       | characterName1      | characterClass1 | characterName2      | characterClass2 |
-      | DbApiTestCharacter1 | wizard          | DbApiTestCharacter2 | warrior         |
+      | DbApiTestCharacter1 | Wizard          | DbApiTestCharacter2 | Warrior         |
 
   Scenario: Get error when trying to create an empty character
 
