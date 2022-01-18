@@ -1,4 +1,4 @@
-#include <fmt/color.h>
+#include <fmt/format.h>
 
 #include <include/service/characters/exception/character_not_found_exception.hpp>
 #include "include/database/characters_db.hpp"
