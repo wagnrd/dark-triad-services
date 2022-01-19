@@ -43,21 +43,21 @@ Install Docker with `sudo snap install docker`.
 #### Build container
 
 ```shell
-sudo docker build --tag local:database-api --build-arg postgres_username=<value> --build-arg postgres_password=<value> .
+sudo docker build --tag local:database-service --build-arg postgres_username=<value> --build-arg postgres_password=<value> .
 ```
 
 #### Start container (for testing)
 
 ```shell
-sudo docker run -p 80:8080/tcp --name database-api local:database-api
+sudo docker run -p 80:8080/tcp --name database-service local:database-service
 ```
 
 #### Remove container
 
 ```shell
-sudo docker container stop database-api
-sudo docker container rm database-api
-sudo docker image rm local:database-api
+sudo docker container stop database-service
+sudo docker container rm database-service
+sudo docker image rm local:database-service
 ```
 
 ### Deploy (Heroku)
@@ -86,4 +86,3 @@ heroku container:release web --app=dark-triad-db
    ```
    \password postgres
    ```
-

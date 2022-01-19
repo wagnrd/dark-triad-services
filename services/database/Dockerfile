@@ -13,6 +13,8 @@ ENV POSTGRES_PASSWORD $postgres_password
 COPY cmake-build-release /build
 COPY config.json /config.json
 
+RUN apt-get update
+RUN apt-get install software-properties-common -y
 RUN add-apt-repository ppa:ubuntu-toolchain-r/test
 RUN apt-get update
 RUN apt-get upgrade -y
