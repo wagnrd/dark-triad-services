@@ -13,8 +13,10 @@ ENV REDIS_PASSWORD $redis_password
 COPY cmake-build-release /build
 COPY config.json /config.json
 
-RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test
-RUN apt-get update -y
+RUN sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+RUN sudo apt-get update
+RUN sudo apt-get upgrade -y
+RUN sudo apt-get dist-upgrade -y
 RUN apt-get install libstdc++6 \
                     libjsoncpp1 \
                     libc-ares2 \
