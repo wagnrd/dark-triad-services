@@ -4,7 +4,46 @@ Authorization: Bearer {{id_token}}
 
 {
     "name": "{{characterName}}",
-    "className": "{{characterClass}}"
+    "className": "{{characterClass}}",
+    "appearance": {
+        "gender": "f",
+        "height": 1.0,
+        "faceId": 0,
+        "earsId": 0,
+        "eyebrowsId": 0,
+        "facialHairId": 0,
+        "hairId": 0,
+        "skinColor": {
+            "r": 0.0,
+            "g": 0.0,
+            "b": 0.0,
+            "a": 0.0
+        },
+        "eyeColor": {
+            "r": 0.0,
+            "g": 0.0,
+            "b": 0.0,
+            "a": 0.0
+        },
+        "scarColor": {
+            "r": 0.0,
+            "g": 0.0,
+            "b": 0.0,
+            "a": 0.0
+        },
+        "tattooColor": {
+            "r": 0.0,
+            "g": 0.0,
+            "b": 0.0,
+            "a": 0.0
+        },
+        "hairColor": {
+            "r": 0.0,
+            "g": 0.0,
+            "b": 0.0,
+            "a": 0.0
+        }
+    }
 }
 
 ###

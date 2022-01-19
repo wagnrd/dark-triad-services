@@ -42,7 +42,7 @@ std::shared_ptr<Json::Value> AppearanceConverter::to_json(const Appearance& appe
     (*json)["earsId"] = appearance.earsId;
     (*json)["hairId"] = appearance.hairId;
     (*json)["eyebrowsId"] = appearance.eyebrowsId;
-    (*json)["facial_hairId"] = appearance.facialHairId;
+    (*json)["facialHairId"] = appearance.facialHairId;
     (*json)["skinColor"] = *ColorConverter::to_json(appearance.skinColor);
     (*json)["eyeColor"] = *ColorConverter::to_json(appearance.eyeColor);
     (*json)["scarColor"] = *ColorConverter::to_json(appearance.scarColor);

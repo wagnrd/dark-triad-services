@@ -3,7 +3,7 @@ function fn() {
 
     var config = {
         baseUrl: 'http://localhost:8080',
-        loginBaseUrl: 'https://dark-triad-login-service.herokuapp.com',
+        loginBaseUrl: 'http://localhost:8081',
         apiKey: ''
     };
 

@@ -4,12 +4,14 @@ Feature: Character management happy cases
     * url baseUrl
     * def login = call read('../../login/login.feature') { email: 'test1@test.com', password: 'Test1234' }
     * def userToken = login.token
+    * def defaultColor = { r: 0.0, g: 0.0, b: 0.0, a: 0.0 }
+    * def defaultAppearance = { gender: 'f', height: 1.0, faceId: 0, earsId: 0, eyebrowsId: 0, facialHairId: 0, hairId: 0, skinColor: #(defaultColor), eyeColor: #(defaultColor), scarColor: #(defaultColor), tattooColor: #(defaultColor), hairColor: #(defaultColor) }
 
   Scenario Outline: Update the experience points of a character
 
     Given path 'protected_api/characters'
     And headers { Authorization: '#(userToken)' }
-    And request { name: '<characterName>', className: '<characterClass>' }
+    And request { name: '<characterName>', className: '<characterClass>', appearance: #(defaultAppearance) }
     When method post
     Then status 201
 
@@ -22,7 +24,7 @@ Feature: Character management happy cases
     And headers { Authorization: '#(apiKey)'}
     When method get
     Then status 200
-    And match response == { name: '<characterName>', className: '<characterClass>', exp: <exp> }
+    And match response.exp == <exp>
 
     Given path 'protected_api/characters/<characterName>'
     And headers { Authorization: '#(userToken)' }
