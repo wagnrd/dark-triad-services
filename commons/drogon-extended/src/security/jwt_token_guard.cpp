@@ -14,19 +14,26 @@ jwt::decoded_jwt<jwt::picojson_traits> JwtTokenGuard::check(const drogon::HttpRe
     if (tokenType != "Bearer")
         throw UnauthorizedException("Provided jwtToken type is invalid: '" + tokenType + "'");
 
-    auto jwtToken = authorization.substr(7);
-    auto decodedJwtToken = jwt::decode(jwtToken);
-
-    auto verifier = jwt::verify().allow_algorithm(jwt::algorithm::rs256{publicKey});
-
-    std::error_code error;
-    verifier.verify(decodedJwtToken, error);
-
-    if (error.value() != static_cast<int>(jwt::error::token_verification_error::ok))
+    try
     {
-        LOG_DEBUG << error.message();
+        auto jwtToken = authorization.substr(7);
+        auto decodedJwtToken = jwt::decode(jwtToken);
+
+        auto verifier = jwt::verify().allow_algorithm(jwt::algorithm::rs256{publicKey});
+
+        std::error_code error;
+        verifier.verify(decodedJwtToken, error);
+
+        if (error.value() != static_cast<int>(jwt::error::token_verification_error::ok))
+        {
+            LOG_DEBUG << error.message();
+            throw std::exception();
+        }
+
+        return decodedJwtToken;
+    }
+    catch (const std::exception& e)
+    {
         throw UnauthorizedException("Provided authorization is invalid: '" + authorization + "'");
     }
-
-    return decodedJwtToken;
 }
