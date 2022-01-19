@@ -15,7 +15,7 @@ COPY config.json /config.json
 
 RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test
 RUN apt-get update -y
-RUN apt-get install libstdc++-11-dev \
+RUN apt-get install libstdc++6 \
                     libjsoncpp1 \
                     libc-ares2 \
                     libpq5 \
