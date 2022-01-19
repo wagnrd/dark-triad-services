@@ -9,7 +9,7 @@ function fn() {
 
     if (env === 'prod') {
         config.baseUrl = 'https://dark-triad-database-service.herokuapp.com';
-        config.loginBaseUrl: 'https://dark-triad-login-service.herokuapp.com',
+        config.loginBaseUrl: 'https://dark-triad-login-service.herokuapp.com';
         config.apiKey = java.lang.System.getenv('API_KEY');
     }
 
