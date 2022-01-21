@@ -72,6 +72,6 @@ void CharactersService::check_character_name(const std::string& name)
             [](char c) { return !(isalnum(c) || (c == ' ')); }
     );
 
-    if (name.end() == characterNameIt)
+    if (characterNameIt != name.end())
         throw std::invalid_argument("Character name is not alphanumeric: " + name);
 }
