@@ -27,9 +27,9 @@ Feature: Create characters
     Examples:
       | characterName             | characterClass |
       | AlmostTooLongTestName1234 | Wizard         |
-      | DbApiTestCharacter        | Archer         |
-      | DbApiTestCharacter        | Warrior        |
-      | DbApiTestCharacter        | Rogue          |
+      | Ng                        | Archer         |
+      | DbApiTestCharacter0       | Warrior        |
+      | Db Api Test Character     | Rogue          |
 
   Scenario Outline: Get an error when trying to create a character with an invalid class
 
@@ -150,7 +150,7 @@ Feature: Create characters
 
     Examples:
       | characterName                    | characterClass |
-      | ACharacterNameWayTooLong0        | Wizard         |
+      | ACharacterNameWayTooLong01       | Wizard         |
       | A                                | Wizard         |
       | 0StartsWithNumeric               | Wizard         |
       | Has_Non/Alpha:Numeric/Characters | Wizard         |
