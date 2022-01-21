@@ -18,6 +18,9 @@ public:
     void delete_character(const std::string& userId, const std::string& characterName);
     drogon::Task<bool> character_name_exists(const std::string& characterName);
     void update_exp(const std::string& characterName, uint32_t exp);
+
+private:
+    void check_character_name(const std::string& characterName);
 };
 
 #endif //DATABASE_API_CHARACTERS_SERVICE_HPP

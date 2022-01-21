@@ -137,7 +137,7 @@ Feature: Create characters
       | DbApiTestCharacter | Wizard         | 9999      | 0        |
       | DbApiTestCharacter | Wizard         | 1111      | 0        |
 
-  Scenario Outline: Get an error when trying to create a character with a character name longer than 25 characters
+  Scenario Outline: Get an error when trying to create a character with invalid name
 
     Given path 'protected_api/characters'
     And request { name: '<characterName>', className: '<characterClass>', appearance: #(defaultAppearance) }
@@ -149,6 +149,8 @@ Feature: Create characters
     Then status 404
 
     Examples:
-      | characterName                  | characterClass |
-      | ACharacterNameWaaaaaaayTooLong | Wizard         |
-      | ACharacterNameOnEdge123456     | Wizard         |
+      | characterName                    | characterClass |
+      | ACharacterNameWayTooLong0        | Wizard         |
+      | A                                | Wizard         |
+      | 0StartsWithNumeric               | Wizard         |
+      | Has_Non/Alpha:Numeric/Characters | Wizard         |
