@@ -63,7 +63,7 @@ void CharactersService::check_character_name(const std::string& name)
         throw std::invalid_argument(errorDescription);
     }
 
-    if (isalpha(name.front()))
+    if (!isalpha(name.front()))
         throw std::invalid_argument("Character name must have a alphabetic character as first character: " + name);
 
     auto characterNameIt = std::find_if(
