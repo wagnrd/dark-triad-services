@@ -63,7 +63,7 @@ jobs:
           for d in ./*/ ; do (cd "$d" && bash build-pipeline/deploy.sh); done
           cd ..
 
-      - name: Verify deployment
+      - name: Verify all deployments
         run: |
           sleep_duration_in_s=10
           echo Waiting $sleep_duration_in_s seconds for deployment to take effect...
@@ -87,7 +87,7 @@ jobs:
           sudo apt-get install openjdk-11-jre-headless
           wget https://github.com/intuit/karate/releases/download/v1.1.0/karate-1.1.0.jar
 
-      - name: Run integration tests
+      - name: Run all integration tests
         env:
           API_KEY: ${{ secrets.app_api_key }}
           ENV: prod
@@ -105,7 +105,7 @@ jobs:
       - name: Install prerequisite packages for rollback
         run: curl https://cli-assets.heroku.com/install.sh | sh
 
-      - name: Heroku rollback
+      - name: Rollback every service deployment
         env:
           HEROKU_API_KEY: ${{ secrets.heroku_api_key }}
         run: |
