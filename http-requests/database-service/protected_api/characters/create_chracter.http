@@ -3,7 +3,7 @@ Content-Type: application/json
 Authorization: Bearer {{id_token}}
 
 {
-    "name": "{{characterName}}",
+    "name": "This  is a    Test",
     "className": "{{characterClass}}",
     "appearance": {
         "gender": "f",

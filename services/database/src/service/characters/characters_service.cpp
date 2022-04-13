@@ -66,12 +66,17 @@ void CharactersService::check_character_name(const std::string& name)
     if (!isalpha(name.front()))
         throw std::invalid_argument("Character name must have a alphabetic character as first character: " + name);
 
-    auto characterNameIt = std::find_if(
+    auto alphaNumericIt = std::find_if(
             name.begin(),
             name.end(),
             [](char c) { return !(isalnum(c) || (c == ' ')); }
     );
 
-    if (characterNameIt != name.end())
+    if (alphaNumericIt != name.end())
         throw std::invalid_argument("Character name is not alphanumeric: " + name);
+
+    auto repeatedSpacesIt = name.find("  ");
+
+    if (repeatedSpacesIt != std::string::npos)
+        throw std::invalid_argument("Character name has repeated spaces: " + name);
 }

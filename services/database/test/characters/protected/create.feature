@@ -154,3 +154,4 @@ Feature: Create characters
       | A                                | Wizard         |
       | 0StartsWithNumeric               | Wizard         |
       | Has_Non/Alpha:Numeric/Characters | Wizard         |
+      | Has  RepeatedSpaces              | Wizard         |
