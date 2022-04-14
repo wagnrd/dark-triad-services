@@ -1,4 +1,3 @@
-@ignore
 Feature: Character name availability
 
   Background:

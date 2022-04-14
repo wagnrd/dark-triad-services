@@ -8,13 +8,7 @@ Feature: Create characters
     * def defaultColor = { r: 0.0, g: 0.0, b: 0.0, a: 0.0 }
     * def defaultAppearance = { gender: 'f', height: 1.0, faceId: 0, earsId: 0, eyebrowsId: 0, facialHairId: 0, hairId: 0, skinColor: #(defaultColor), eyeColor: #(defaultColor), scarColor: #(defaultColor), tattooColor: #(defaultColor), hairColor: #(defaultColor) }
     * def warriorEquipment = { mainWeapon: 'Shortsword', supportWeapon: 'Wooden Heater Shield', headArmour: '', shoulderArmour: '', torsoArmour: 'Recruit Chestplate', armArmour: 'Recruit Gloves', legArmour: 'Recruit Legwear', footArmour: 'Recruit Boots' }
-    * def archerEquipment = { mainWeapon: 'Wooden Bow', supportWeapon: 'Wooden Arrows', headArmour: '', shoulderArmour: '', torsoArmour: 'Strayer Jacket', armArmour: 'Strayser Gloves', legArmour: 'Strayer Trousers', footArmour: 'Strayer Boots' }
-    * def sleep =
-      """
-      function(ms) {
-        java.lang.Thread.sleep(ms);
-      }
-      """
+    * def archerEquipment = { mainWeapon: 'Wooden Bow', supportWeapon: 'Wooden Arrows', headArmour: '', shoulderArmour: '', torsoArmour: 'Strayer Jacket', armArmour: 'Strayer Gloves', legArmour: 'Strayer Trousers', footArmour: 'Strayer Boots' }
 
   Scenario Outline: Create character with every valid class and valid name combinations
 
@@ -26,7 +20,7 @@ Feature: Create characters
     Given path 'protected_api/characters'
     When method get
     Then status 200
-    And match response == { characters: [ { name: '<characterName>', className: '<characterClass>', exp: 0, appearance: #(defaultAppearance), equipment: #(warriorEquipment) } ] }
+    And match response == { characters: [ { name: '<characterName>', className: '<characterClass>', exp: 0, appearance: #(defaultAppearance), equipment: <equipment> } ] }
 
     Given path 'protected_api/characters/<characterName>'
     When method delete
@@ -36,8 +30,8 @@ Feature: Create characters
       | characterName             | characterClass | equipment           |
       | AlmostTooLongTestName1234 | Warrior        | #(warriorEquipment) |
       | Ng                        | Warrior        | #(warriorEquipment) |
-      | DbApiTestCharacter0       | Warrior        | #(warriorEquipment) |
-      | Db Api Test Character     | Warrior        | #(warriorEquipment) |
+      | DbApiTestCharacter0       | Archer         | #(archerEquipment)  |
+      | Db Api Test Character     | Archer         | #(archerEquipment)  |
 
   Scenario Outline: Get an error when trying to create a character with an invalid class
 
@@ -70,7 +64,7 @@ Feature: Create characters
     Given path 'protected_api/characters'
     When method get
     Then status 200
-    And match response == { characters: [ { name: '<characterName>', className: '<characterClass1>', exp: 0, appearance: #(defaultAppearance) } ] }
+    And match response == { characters: [ { name: '<characterName>', className: '<characterClass1>', exp: 0, appearance: #(defaultAppearance), equipment: #(warriorEquipment) } ] }
 
     Given path 'protected_api/characters/<characterName>'
     When method delete
@@ -99,7 +93,7 @@ Feature: Create characters
     Given path 'protected_api/characters'
     When method get
     Then status 200
-    And match response == { characters: [ { name: '<characterName1>', className: '<characterClass1>', exp: 0, appearance: #(defaultAppearance) }, { name: '<characterName2>', className: '<characterClass2>', exp: 0, appearance: #(defaultAppearance) } ] }
+    And match response == { characters: [ { name: '<characterName1>', className: '<characterClass1>', exp: 0, appearance: #(defaultAppearance), equipment: #(warriorEquipment) }, { name: '<characterName2>', className: '<characterClass2>', exp: 0, appearance: #(defaultAppearance), equipment: #(archerEquipment) } ] }
 
     Given path 'protected_api/characters/<characterName1>'
     When method delete
@@ -111,7 +105,7 @@ Feature: Create characters
 
     Examples:
       | characterName1      | characterClass1 | characterName2      | characterClass2 |
-      | DbApiTestCharacter1 | Warrior         | DbApiTestCharacter2 | Warrior         |
+      | DbApiTestCharacter1 | Warrior         | DbApiTestCharacter2 | Archer          |
 
   Scenario: Get error when trying to create an empty character
 

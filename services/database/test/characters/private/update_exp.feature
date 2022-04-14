@@ -1,4 +1,3 @@
-@ignore
 Feature: Character management happy cases
 
   Background:

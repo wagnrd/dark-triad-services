@@ -58,26 +58,25 @@ drogon::Task<> CharactersDB::create_character(const std::string& userId, const C
     auto encodedTattooColor = CharactersDBColorUtil::encode_color(character.appearance.tattooColor);
     auto encodedHairColor = CharactersDBColorUtil::encode_color(character.appearance.hairColor);
 
-    auto sql = fmt::format(
+    auto sqlCreateBaseCharacter = fmt::format(
             R"(
-                WITH tmp AS (
-                    INSERT INTO character
-                        (user_id, name, class)
-                    VALUES
-                        ('{}', '{}', '{}')
-                )
-                INSERT INTO appearance
-	                (character, gender, height, face_id, ears_id, hair_id, eyebrows_id, facial_hair_id, skin_color, eye_color, scar_color, tattoo_color, hair_color)
+                INSERT INTO character
+                    (user_id, name, class)
                 VALUES
-	                ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');
-                INSERT INTO equipment
-                    (character, main_weapon, support_weapon, head_armour, torso_armour, shoulder_armour, arm_armour, leg_armour, foot_armour)
-                VALUES
-                    ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');
+                    ('{}', '{}', '{}');
             )",
             userId,
             character.name,
-            character.className,
+            character.className
+    );
+
+    auto sqlCreateAppearance = fmt::format(
+            R"(
+                INSERT INTO appearance
+                    (character, gender, height, face_id, ears_id, hair_id, eyebrows_id, facial_hair_id, skin_color, eye_color, scar_color, tattoo_color, hair_color)
+                VALUES
+                    ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');
+            )",
             character.name,
             character.appearance.gender,
             character.appearance.height,
@@ -90,7 +89,16 @@ drogon::Task<> CharactersDB::create_character(const std::string& userId, const C
             encodedEyeColor,
             encodedScarColor,
             encodedTattooColor,
-            encodedHairColor,
+            encodedHairColor
+    );
+
+    auto sqlCreateEquipment = fmt::format(
+            R"(
+                INSERT INTO equipment
+                    (character, main_weapon, support_weapon, head_armour, torso_armour, shoulder_armour, arm_armour, leg_armour, foot_armour)
+                VALUES
+                    ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');
+            )",
             character.name,
             character.equipment.mainWeapon,
             character.equipment.supportWeapon,
@@ -101,7 +109,11 @@ drogon::Task<> CharactersDB::create_character(const std::string& userId, const C
             character.equipment.legArmour,
             character.equipment.footArmour
     );
-    co_await postgres->execSqlCoro(sql);
+
+    auto transaction = postgres->newTransaction();
+    co_await transaction->execSqlCoro(sqlCreateBaseCharacter);
+    co_await transaction->execSqlCoro(sqlCreateAppearance);
+    co_await transaction->execSqlCoro(sqlCreateEquipment);
 }
 
 void CharactersDB::delete_character(const std::string& userId, const std::string& characterName)
@@ -156,14 +168,14 @@ Character CharactersDB::build_character(const drogon::orm::Row& row)
                     .hairColor = CharactersDBColorUtil::decode_color(row["hair_color"].as<int>())
             },
             .equipment {
-                .mainWeapon = row["main_weapon"].c_str(),
-                .supportWeapon = row["support_weapon"].c_str(),
-                .headArmour = row["head_armour"].c_str(),
-                .torsoArmour = row["torso_armour"].c_str(),
-                .shoulderArmour = row["shoulder_armour"].c_str(),
-                .armArmour = row["arm_armour"].c_str(),
-                .legArmour = row["leg_armour"].c_str(),
-                .footArmour = row["foot_armour"].c_str(),
+                    .mainWeapon = row["main_weapon"].c_str(),
+                    .supportWeapon = row["support_weapon"].c_str(),
+                    .headArmour = row["head_armour"].c_str(),
+                    .torsoArmour = row["torso_armour"].c_str(),
+                    .shoulderArmour = row["shoulder_armour"].c_str(),
+                    .armArmour = row["arm_armour"].c_str(),
+                    .legArmour = row["leg_armour"].c_str(),
+                    .footArmour = row["foot_armour"].c_str(),
             }
     };
 }
