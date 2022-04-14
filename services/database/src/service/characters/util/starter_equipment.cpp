@@ -24,7 +24,6 @@ Equipment StarterEquipment::create(std::string_view characterClass)
 Equipment StarterEquipment::create_heavy_armour()
 {
     return Equipment{
-            .headArmour = "Recruit Helmet",
             .torsoArmour = "Recruit Chestplate",
             .armArmour = "Recruit Gloves",
             .legArmour = "Recruit Legwear",
@@ -35,7 +34,6 @@ Equipment StarterEquipment::create_heavy_armour()
 Equipment StarterEquipment::create_medium_armour()
 {
     return Equipment{
-            .headArmour = "Strayer Hat",
             .torsoArmour = "Strayer Jacket",
             .armArmour = "Strayer Gloves",
             .legArmour = "Strayer Trousers",

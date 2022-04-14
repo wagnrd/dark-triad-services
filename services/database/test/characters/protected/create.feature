@@ -7,8 +7,14 @@ Feature: Create characters
     * configure headers = { Authorization: '#(authorization)' }
     * def defaultColor = { r: 0.0, g: 0.0, b: 0.0, a: 0.0 }
     * def defaultAppearance = { gender: 'f', height: 1.0, faceId: 0, earsId: 0, eyebrowsId: 0, facialHairId: 0, hairId: 0, skinColor: #(defaultColor), eyeColor: #(defaultColor), scarColor: #(defaultColor), tattooColor: #(defaultColor), hairColor: #(defaultColor) }
-    * def warriorEquipment = { mainWeapon: 'Broadsword', supportWeapon: 'Wooden Heater Shield', head: '', shoulder: '', torso: 'Recruit Chestplate', arm: 'Recruit Gloves', leg: 'Recruit Legwear', foot: 'Recruit Boots' }
-    * def archerEquipment = { mainWeapon: 'Wooden Bow', supportWeapon: 'Wooden Arrows', head: '', shoulder: '', torso: 'Strayer Jacket', arm: 'Strayser Gloves', leg: 'Strayer Trousers', foot: 'Strayer Boots' }
+    * def warriorEquipment = { mainWeapon: 'Shortsword', supportWeapon: 'Wooden Heater Shield', headArmour: '', shoulderArmour: '', torsoArmour: 'Recruit Chestplate', armArmour: 'Recruit Gloves', legArmour: 'Recruit Legwear', footArmour: 'Recruit Boots' }
+    * def archerEquipment = { mainWeapon: 'Wooden Bow', supportWeapon: 'Wooden Arrows', headArmour: '', shoulderArmour: '', torsoArmour: 'Strayer Jacket', armArmour: 'Strayser Gloves', legArmour: 'Strayer Trousers', footArmour: 'Strayer Boots' }
+    * def sleep =
+      """
+      function(ms) {
+        java.lang.Thread.sleep(ms);
+      }
+      """
 
   Scenario Outline: Create character with every valid class and valid name combinations
 
