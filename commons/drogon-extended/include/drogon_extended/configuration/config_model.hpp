@@ -1,5 +1,5 @@
-#ifndef DATABASE_API_CONFIG_MODEL_HPP
-#define DATABASE_API_CONFIG_MODEL_HPP
+#ifndef DARK_TRIAD_SERVICES_CONFIG_MODEL_HPP
+#define DARK_TRIAD_SERVICES_CONFIG_MODEL_HPP
 
 #include <utility>
 
@@ -106,4 +106,4 @@ public:
     friend Configuration<BaseConfigT>;
 };
 
-#endif //DATABASE_API_CONFIG_MODEL_HPP
+#endif //DARK_TRIAD_SERVICES_CONFIG_MODEL_HPP

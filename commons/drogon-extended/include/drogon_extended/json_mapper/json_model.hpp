@@ -1,5 +1,5 @@
-#ifndef DATABASE_API_JSON_MODEL_HPP
-#define DATABASE_API_JSON_MODEL_HPP
+#ifndef DARK_TRIAD_SERVICES_JSON_MODEL_HPP
+#define DARK_TRIAD_SERVICES_JSON_MODEL_HPP
 
 #include <memory>
 #include <json/json.h>
@@ -18,4 +18,4 @@ protected:
     Json::Value& check(const std::string& key);
 };
 
-#endif //DATABASE_API_JSON_MODEL_HPP
+#endif //DARK_TRIAD_SERVICES_JSON_MODEL_HPP

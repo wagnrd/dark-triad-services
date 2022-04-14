@@ -1,5 +1,5 @@
-#ifndef DATABASE_API_GLOBAL_EXCEPTION_MAPPER_HPP
-#define DATABASE_API_GLOBAL_EXCEPTION_MAPPER_HPP
+#ifndef DARK_TRIAD_SERVICES_GLOBAL_EXCEPTION_MAPPER_HPP
+#define DARK_TRIAD_SERVICES_GLOBAL_EXCEPTION_MAPPER_HPP
 
 #include <functional>
 #include <drogon/drogon.h>
@@ -13,4 +13,4 @@ public:
                                          std::function<void(const drogon::HttpResponsePtr&)>& callback);
 };
 
-#endif //DATABASE_API_GLOBAL_EXCEPTION_MAPPER_HPP
+#endif //DARK_TRIAD_SERVICES_GLOBAL_EXCEPTION_MAPPER_HPP

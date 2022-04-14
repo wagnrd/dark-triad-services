@@ -1,5 +1,5 @@
-#ifndef DATABASE_API_SERVICE_HPP
-#define DATABASE_API_SERVICE_HPP
+#ifndef DARK_TRIAD_SERVICES_SERVICE_HPP
+#define DARK_TRIAD_SERVICES_SERVICE_HPP
 
 template<class T>
 class Service {
@@ -11,4 +11,4 @@ public:
     }
 };
 
-#endif //DATABASE_API_SERVICE_HPP
+#endif //DARK_TRIAD_SERVICES_SERVICE_HPP

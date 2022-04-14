@@ -1,5 +1,5 @@
-#ifndef DATABASE_API_EXCEPTION_MAPPER_MACROS_HPP
-#define DATABASE_API_EXCEPTION_MAPPER_MACROS_HPP
+#ifndef DARK_TRIAD_SERVICES_EXCEPTION_MAPPER_MACROS_HPP
+#define DARK_TRIAD_SERVICES_EXCEPTION_MAPPER_MACROS_HPP
 
 #include "global_exception_mapper.hpp"
 
@@ -11,4 +11,4 @@
             exceptionMapper.handle_exceptions([&] { throw; }, callback);    \
         }, callback );
 
-#endif //DATABASE_API_EXCEPTION_MAPPER_MACROS_HPP
+#endif //DARK_TRIAD_SERVICES_EXCEPTION_MAPPER_MACROS_HPP

@@ -1,5 +1,5 @@
-#ifndef DATABASE_API_EXCEPTION_MAPPER_HPP
-#define DATABASE_API_EXCEPTION_MAPPER_HPP
+#ifndef DARK_TRIAD_SERVICES_EXCEPTION_MAPPER_HPP
+#define DARK_TRIAD_SERVICES_EXCEPTION_MAPPER_HPP
 
 #include <functional>
 
@@ -15,4 +15,4 @@ public:
                                                                           const std::string& description);
 };
 
-#endif //DATABASE_API_EXCEPTION_MAPPER_HPP
+#endif //DARK_TRIAD_SERVICES_EXCEPTION_MAPPER_HPP
