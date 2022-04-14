@@ -1,6 +1,6 @@
 {
   "app": {
-    "version": "0.2"
+    "version": "0.3"
   },
   "postgres": {
     "host": "ec2-54-78-36-245.eu-west-1.compute.amazonaws.com",
