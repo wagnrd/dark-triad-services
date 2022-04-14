@@ -1,11 +1,13 @@
 
+#include "BeginAdviceTest.h"
 #include "CustomCtrl.h"
 #include "CustomHeaderFilter.h"
 #include "DigestAuthFilter.h"
+
 #include <drogon/drogon.h>
-#include <vector>
-#include <string>
 #include <iostream>
+#include <string>
+#include <vector>
 
 using namespace drogon;
 using namespace std::chrono_literals;
@@ -362,10 +364,14 @@ int main()
         }
     });
     app().registerCustomExtensionMime("md", "text/markdown");
-    app().setFileTypes({"md", "html", "jpg", "cc"});
+    app().setFileTypes({"md", "html", "jpg", "cc", "txt"});
     std::cout << "Date: "
               << std::string{drogon::utils::getHttpFullDate(
                      trantor::Date::now())}
               << std::endl;
+
+    app().registerBeginningAdvice(
+        []() { BeginAdviceTest::setContent("DrogonReady"); });
+
     app().run();
 }

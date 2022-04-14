@@ -28,6 +28,7 @@
 #include <functional>
 #include <chrono>
 #include <limits>
+#include <atomic>
 
 namespace trantor
 {
@@ -121,8 +122,18 @@ class TRANTOR_EXPORT EventLoop : NonCopyable
      * @note If the current thread is the thread of the event loop, the function
      * f is executed directly before the method exiting.
      */
-    void runInLoop(const Func &f);
-    void runInLoop(Func &&f);
+    template <typename Functor>
+    inline void runInLoop(Functor &&f)
+    {
+        if (isInLoopThread())
+        {
+            f();
+        }
+        else
+        {
+            queueInLoop(std::forward<Functor>(f));
+        }
+    }
 
     /**
      * @brief Run the function f in the thread of the event loop.
@@ -260,7 +271,8 @@ class TRANTOR_EXPORT EventLoop : NonCopyable
      */
     bool isRunning()
     {
-        return looping_ && (!quit_);
+        return looping_.load(std::memory_order_acquire) &&
+               (!quit_.load(std::memory_order_acquire));
     }
 
     /**
@@ -287,9 +299,9 @@ class TRANTOR_EXPORT EventLoop : NonCopyable
     void abortNotInLoopThread();
     void wakeup();
     void wakeupRead();
-    bool looping_;
+    std::atomic<bool> looping_;
     std::thread::id threadId_;
-    bool quit_;
+    std::atomic<bool> quit_;
     std::unique_ptr<Poller> poller_;
 
     ChannelList activeChannels_;

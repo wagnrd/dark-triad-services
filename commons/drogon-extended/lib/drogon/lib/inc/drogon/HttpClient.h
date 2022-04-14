@@ -129,6 +129,9 @@ class DROGON_EXPORT HttpClient : public trantor::NonCopyable
     std::pair<ReqResult, HttpResponsePtr> sendRequest(const HttpRequestPtr &req,
                                                       double timeout = 0)
     {
+        assert(!getLoop()->isInLoopThread() &&
+               "Deadlock detected! Calling a sync API from the same loop as "
+               "the HTTP client processes on will deadlock the event loop");
         std::promise<std::pair<ReqResult, HttpResponsePtr>> prom;
         auto f = prom.get_future();
         sendRequest(
@@ -258,6 +261,31 @@ class DROGON_EXPORT HttpClient : public trantor::NonCopyable
         return port() == 80;
     }
 
+    /**
+     * @brief Set the client certificate used by the HTTP connection
+     *
+     * @param cert Path to the certificate
+     * @param key Path to the certificate's private key
+     * @note this method has no effect if the HTTP client is communicating via
+     * unencrypted HTTP
+     */
+    virtual void setCertPath(const std::string &cert,
+                             const std::string &key) = 0;
+
+    /**
+     * @brief Supplies command style options for `SSL_CONF_cmd`
+     *
+     * @param sslConfCmds options for SSL_CONF_cmd
+     * @note this method has no effect if the HTTP client is communicating via
+     * unencrypted HTTP
+     * @code
+     * addSSLConfigs({{"-dhparam", "/path/to/dhparam"}, {"-strict", ""}});
+     * @endcode
+     */
+    virtual void addSSLConfigs(
+        const std::vector<std::pair<std::string, std::string>>
+            &sslConfCmds) = 0;
+
     /// Create a Http client using the hostString to connect to server
     /**
      *
@@ -316,17 +344,10 @@ inline void internal::HttpRespAwaiter::await_suspend(
                 setValue(resp);
             else
             {
-                std::string reason;
-                if (result == ReqResult::BadResponse)
-                    reason = "BadResponse";
-                else if (result == ReqResult::NetworkFailure)
-                    reason = "NetworkFailure";
-                else if (result == ReqResult::BadServerAddress)
-                    reason = "BadServerAddress";
-                else if (result == ReqResult::Timeout)
-                    reason = "Timeout";
+                std::stringstream ss;
+                ss << result;
                 setException(
-                    std::make_exception_ptr(std::runtime_error(reason)));
+                    std::make_exception_ptr(std::runtime_error(ss.str())));
             }
             handle.resume();
         },

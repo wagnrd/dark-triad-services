@@ -350,6 +350,17 @@ class DROGON_EXPORT HttpAppFramework : public trantor::NonCopyable
         const std::function<void(const HttpRequestPtr &,
                                  const HttpResponsePtr &)> &advice) = 0;
 
+    /// Setup output of logs to files
+    /**
+     * @note
+     * Logs are output to the standard output by default.
+     * Logging is setuped only if output path of logs is defined.
+     * This method is called in run() function, hence use this method only if
+     * you want to setup logging earlier.
+     * @return HttpAppFramework&
+     */
+    virtual HttpAppFramework &setupFileLogger() = 0;
+
     /* End of AOP methods */
 
     /// Load the configuration file with json format.
@@ -1106,6 +1117,19 @@ class DROGON_EXPORT HttpAppFramework : public trantor::NonCopyable
      * @return HttpAppFramework&
      */
     virtual HttpAppFramework &setTermSignalHandler(
+        const std::function<void()> &handler) = 0;
+
+    /**
+     * @brief Set the INT Signal Handler. This method provides a way to users
+     * for exiting program gracefully. When the INT signal is received after
+     * app().run() is called, the handler is invoked. Drogon uses a default
+     * signal handler for the INT signal, which calls the 'app().quit()' method
+     * when the INT signal is received.
+     *
+     * @param handler
+     * @return HttpAppFramework&
+     */
+    virtual HttpAppFramework &setIntSignalHandler(
         const std::function<void()> &handler) = 0;
 
     /// Get homepage, default is "index.html"

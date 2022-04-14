@@ -28,8 +28,8 @@
 #include <algorithm>
 #ifdef _WIN32
 #include <time.h>
-char *strptime(const char *s, const char *f, struct tm *tm);
-time_t timegm(struct tm *tm);
+DROGON_EXPORT char *strptime(const char *s, const char *f, struct tm *tm);
+DROGON_EXPORT time_t timegm(struct tm *tm);
 #endif
 namespace drogon
 {
@@ -395,7 +395,9 @@ inline bool fromString<bool>(const std::string &p) noexcept(false)
         return false;
     }
     std::string l{p};
-    std::transform(p.begin(), p.end(), l.begin(), tolower);
+    std::transform(p.begin(), p.end(), l.begin(), [](unsigned char ch) {
+        return static_cast<unsigned char>(tolower(ch));
+    });
     if (l == "true")
     {
         return true;

@@ -186,6 +186,11 @@ static void TERMFunction(int sig)
         LOG_WARN << "SIGTERM signal received.";
         HttpAppFrameworkImpl::instance().getTermSignalHandler()();
     }
+    else if (sig == SIGINT)
+    {
+        LOG_WARN << "SIGINT signal received.";
+        HttpAppFrameworkImpl::instance().getIntSignalHandler()();
+    }
 }
 
 }  // namespace drogon
@@ -447,7 +452,6 @@ void HttpAppFrameworkImpl::run()
         getLoop()->moveToCurrentThread();
     }
     LOG_TRACE << "Start to run...";
-    trantor::AsyncFileLogger asyncFileLogger;
     // Create dirs for cache files
     for (int i = 0; i < 256; ++i)
     {
@@ -492,35 +496,27 @@ void HttpAppFrameworkImpl::run()
     }
     if (handleSigterm_)
     {
+#ifdef WIN32
         signal(SIGTERM, TERMFunction);
-    }
-    // set logger
-    if (!logPath_.empty())
-    {
-        // std::filesystem does not provide a method to check access
-        // permissions, so keep existing code
-        if (os_access(utils::toNativePath(logPath_).c_str(), R_OK | W_OK) != 0)
+        signal(SIGINT, TERMFunction);
+#else
+        struct sigaction sa;
+        sa.sa_handler = TERMFunction;
+        sigemptyset(&sa.sa_mask);
+        sa.sa_flags = 0;
+        if (sigaction(SIGINT, &sa, NULL) == -1)
         {
-            LOG_ERROR << "log file path not exist";
+            LOG_ERROR << "sigaction() failed, can't set SIGINT handler";
             abort();
         }
-        else
+        if (sigaction(SIGTERM, &sa, NULL) == -1)
         {
-            std::string baseName = logfileBaseName_;
-            if (baseName.empty())
-            {
-                baseName = "drogon";
-            }
-            asyncFileLogger.setFileName(baseName, ".log", logPath_);
-            asyncFileLogger.startLogging();
-            trantor::Logger::setOutputFunction(
-                [&](const char *msg, const uint64_t len) {
-                    asyncFileLogger.output(msg, len);
-                },
-                [&]() { asyncFileLogger.flush(); });
-            asyncFileLogger.setFileSizeLimit(logfileSize_);
+            LOG_ERROR << "sigaction() failed, can't set SIGTERM handler";
+            abort();
         }
+#endif
     }
+    setupFileLogger();
     if (relaunchOnError_)
     {
         LOG_INFO << "Start child process";
@@ -588,13 +584,13 @@ void HttpAppFrameworkImpl::run()
     staticFileRouterPtr_->init(ioLoops);
     websockCtrlsRouterPtr_->init();
     getLoop()->queueInLoop([this]() {
-        // Let listener event loops run when everything is ready.
-        listenerManagerPtr_->startListening();
         for (auto &adv : beginningAdvices_)
         {
             adv();
         }
         beginningAdvices_.clear();
+        // Let listener event loops run when everything is ready.
+        listenerManagerPtr_->startListening();
     });
     getLoop()->loop();
 }
@@ -1094,6 +1090,38 @@ HttpAppFramework &HttpAppFrameworkImpl::setDefaultHandler(
     DefaultHandler handler)
 {
     staticFileRouterPtr_->setDefaultHandler(std::move(handler));
+    return *this;
+}
+
+HttpAppFramework &HttpAppFrameworkImpl::setupFileLogger()
+{
+    if (!logPath_.empty() && !asyncFileLoggerPtr_)
+    {
+        // std::filesystem does not provide a method to check access
+        // permissions, so keep existing code
+        if (os_access(utils::toNativePath(logPath_).c_str(), R_OK | W_OK) != 0)
+        {
+            LOG_ERROR << "log file path not exist";
+            abort();
+        }
+        else
+        {
+            std::string baseName = logfileBaseName_;
+            if (baseName.empty())
+            {
+                baseName = "drogon";
+            }
+            asyncFileLoggerPtr_ = std::make_unique<trantor::AsyncFileLogger>();
+            asyncFileLoggerPtr_->setFileName(baseName, ".log", logPath_);
+            asyncFileLoggerPtr_->startLogging();
+            trantor::Logger::setOutputFunction(
+                [this](const char *msg, const uint64_t len) {
+                    asyncFileLoggerPtr_->output(msg, len);
+                },
+                [this]() { asyncFileLoggerPtr_->flush(); });
+            asyncFileLoggerPtr_->setFileSizeLimit(logfileSize_);
+        }
+    }
     return *this;
 }
 

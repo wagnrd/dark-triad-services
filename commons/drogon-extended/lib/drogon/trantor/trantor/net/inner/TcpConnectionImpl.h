@@ -47,6 +47,13 @@ std::shared_ptr<SSLContext> newSSLServerContext(
     const std::string &keyPath,
     bool useOldTLS,
     const std::vector<std::pair<std::string, std::string>> &sslConfCmds);
+std::shared_ptr<SSLContext> newSSLClientContext(
+    bool useOldTLS,
+    bool validateCert,
+    const std::string &certPath = "",
+    const std::string &keyPath = "",
+    const std::vector<std::pair<std::string, std::string>> &sslConfCmds = {});
+
 // void initServerSSLContext(const std::shared_ptr<SSLContext> &ctx,
 //                           const std::string &certPath,
 //                           const std::string &keyPath);
@@ -223,23 +230,42 @@ class TcpConnectionImpl : public TcpConnection,
     {
         recvMsgCallback_ = cb;
     }
+    void setRecvMsgCallback(RecvMessageCallback &&cb)
+    {
+        recvMsgCallback_ = std::move(cb);
+    }
     void setConnectionCallback(const ConnectionCallback &cb)
     {
         connectionCallback_ = cb;
+    }
+    void setConnectionCallback(ConnectionCallback &&cb)
+    {
+        connectionCallback_ = std::move(cb);
     }
     void setWriteCompleteCallback(const WriteCompleteCallback &cb)
     {
         writeCompleteCallback_ = cb;
     }
+    void setWriteCompleteCallback(WriteCompleteCallback &&cb)
+    {
+        writeCompleteCallback_ = std::move(cb);
+    }
     void setCloseCallback(const CloseCallback &cb)
     {
         closeCallback_ = cb;
+    }
+    void setCloseCallback(CloseCallback &&cb)
+    {
+        closeCallback_ = std::move(cb);
     }
     void setSSLErrorCallback(const SSLErrorCallback &cb)
     {
         sslErrorCallback_ = cb;
     }
-
+    void setSSLErrorCallback(SSLErrorCallback &&cb)
+    {
+        sslErrorCallback_ = std::move(cb);
+    }
     void connectDestroyed();
     virtual void connectEstablished();
 

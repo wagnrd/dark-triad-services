@@ -13,17 +13,20 @@
  *
  */
 #define DROGON_TEST_MAIN
+#include <drogon/HttpAppFramework.h>
 #include <drogon/config.h>
+#include <drogon/drogon_test.h>
+#include <drogon/orm/CoroMapper.h>
 #include <drogon/orm/DbClient.h>
 #include <drogon/orm/DbTypes.h>
-#include <drogon/orm/CoroMapper.h>
 #include <trantor/utils/Logger.h>
-#include <drogon/drogon_test.h>
-#include <drogon/HttpAppFramework.h>
+
+#include <stdlib.h>
 #include <chrono>
 #include <iostream>
+#include <string>
 #include <thread>
-#include <stdlib.h>
+#include <vector>
 
 #include "mysql/Users.h"
 #include "postgresql/Users.h"
@@ -32,14 +35,24 @@
 using namespace std::chrono_literals;
 using namespace drogon::orm;
 
+void expFunction(const DrogonDbException &e)
+{
+}
 #if USE_POSTGRESQL
 DbClientPtr postgreClient;
 DROGON_TEST(PostgreTest)
 {
     auto &clientPtr = postgreClient;
     // Prepare the test environment
-    *clientPtr << "DROP TABLE IF EXISTS USERS" >> [TEST_CTX](const Result &r) {
+    *clientPtr << "DROP TABLE IF EXISTS USERS" >> [TEST_CTX,
+                                                   clientPtr](const Result &r) {
         SUCCESS();
+        clientPtr->execSqlAsync(
+            "select 1 as result",
+            [TEST_CTX](const drogon::orm::Result &r) {
+                MANDATE(r.size() == 1);
+            },
+            expFunction);
     } >> [TEST_CTX](const DrogonDbException &e) {
         FAULT("postgresql - Prepare the test environment(0) what():" +
               std::string(e.base().what()));
@@ -578,6 +591,13 @@ DROGON_TEST(PostgreTest)
             FAULT("postgresql - ORM mapper asynchronous interface(3) what():" +
                   std::string(e.base().what()));
         });
+    /// 6.3.6 pagination
+    mapper.paginate(2, 1).findAll(
+        [TEST_CTX](std::vector<Users> users) { MANDATE(users.size() == 1); },
+        [TEST_CTX](const DrogonDbException &e) {
+            FAULT("postgresql - ORM mapper asynchronous interface(4) what():" +
+                  std::string(e.base().what()));
+        });
     /// 6.4 find by primary key. blocking
     try
     {
@@ -592,6 +612,37 @@ DROGON_TEST(PostgreTest)
     catch (const DrogonDbException &e)
     {
         FAULT("postgresql - ORM mapper synchronous interface(0) what():" +
+              std::string(e.base().what()));
+    }
+    /// 6.5 update by criteria. blocking
+    try
+    {
+        auto user = mapper.findByPrimaryKey(2);
+        SUCCESS();
+        Users newUser;
+        newUser.setId(user.getValueOfId());
+        newUser.setSalt("xxx");
+        newUser.setUserName(user.getValueOfUserName());
+        auto c = mapper.update(newUser);
+        MANDATE(c == 1);
+        c = mapper.updateBy({Users::Cols::_avatar_id, Users::Cols::_salt},
+                            Criteria(Users::Cols::_user_id,
+                                     CompareOperator::EQ,
+                                     "pg"),
+                            "avatar of pg",
+                            "salt of pg");
+        MANDATE(c == 1);
+        c = mapper.updateBy({Users::Cols::_avatar_id, Users::Cols::_salt},
+                            Criteria(Users::Cols::_user_id,
+                                     CompareOperator::EQ,
+                                     "none"),
+                            "avatar of none",
+                            "salt of none");
+        MANDATE(c == 0);
+    }
+    catch (const DrogonDbException &e)
+    {
+        FAULT("postgresql - ORM mapper synchronous interface(1) what():" +
               std::string(e.base().what()));
     }
 #ifdef __cpp_impl_coroutine
@@ -632,7 +683,7 @@ DROGON_TEST(PostgreTest)
         }
         catch (const DrogonDbException &e)
         {
-            FAULT("postgresql - ORM mapper coroutine  interface(0) what():" +
+            FAULT("postgresql - ORM mapper coroutine interface(0) what():" +
                   std::string(e.base().what()));
         }
         try
@@ -656,6 +707,75 @@ DROGON_TEST(PostgreTest)
         {
             SUCCESS();
         }
+        try
+        {
+            CoroMapper<Users> mapper(clientPtr);
+            auto users = co_await mapper.orderBy(Users::Cols::_user_id)
+                             .limit(2)
+                             .findAll();
+            MANDATE(users.size() == 2);
+            SUCCESS();
+        }
+        catch (const DrogonDbException &e)
+        {
+            FAULT("postgresql - ORM mapper coroutine interface(2) what():" +
+                  std::string(e.base().what()));
+        }
+        // CoroMapper::update
+        try
+        {
+            CoroMapper<Users> mapper(clientPtr);
+            auto user = co_await mapper.findByPrimaryKey(2);
+            SUCCESS();
+            Users newUser;
+            newUser.setId(user.getValueOfId());
+            newUser.setSalt("xxx");
+            size_t c = co_await mapper.update(newUser);
+            MANDATE(c == 1);
+            SUCCESS();
+        }
+        catch (const DrogonDbException &e)
+        {
+            FAULT("postgresql - ORM mapper coroutine interface(3) what():" +
+                  std::string(e.base().what()));
+        }
+        // CoroMapper::updateBy
+        try
+        {
+            CoroMapper<Users> mapper(clientPtr);
+            auto awaiter = mapper.updateBy(
+                {Users::Cols::_avatar_id, Users::Cols::_salt},
+                Criteria(Users::Cols::_user_id, CompareOperator::EQ, "pg"),
+                "avatar of pg",
+                "salt of pg");
+            size_t c = co_await awaiter;
+            MANDATE(c == 1);
+            // Can not compile if use co_await and initilizer_list together.
+            // Seems to be a bug in gcc.
+            std::vector<std::string> updateFields{Users::Cols::_avatar_id,
+                                                  Users::Cols::_salt};
+            c = co_await mapper.updateBy(updateFields,
+                                         Criteria(Users::Cols::_user_id,
+                                                  CompareOperator::EQ,
+                                                  "none"),
+                                         "avatar of none",
+                                         "salt of none");
+            MANDATE(c == 0);
+            auto count = co_await mapper.count();
+            // Use std::make_tuple to as an alternative to initializer_list
+            c = co_await mapper.updateBy(
+                std::make_tuple(Users::Cols::_avatar_id, Users::Cols::_salt),
+                Criteria(),
+                "avatar",
+                "salt");
+            MANDATE(c == count);
+            SUCCESS();
+        }
+        catch (const DrogonDbException &e)
+        {
+            FAULT("postgresql - ORM mapper coroutine interface(4) what():" +
+                  std::string(e.base().what()));
+        }
         /// 7.4 Transactions
         try
         {
@@ -674,6 +794,7 @@ DROGON_TEST(PostgreTest)
         }
     };
     drogon::sync_wait(coro_test());
+
 #endif
 }
 #endif
@@ -686,7 +807,15 @@ DROGON_TEST(MySQLTest)
     REQUIRE(clientPtr != nullptr);
     // Prepare the test environment
     *clientPtr << "CREATE DATABASE IF NOT EXISTS drogonTestMysql" >>
-        [TEST_CTX](const Result &r) { SUCCESS(); } >>
+        [TEST_CTX, clientPtr](const Result &r) {
+            SUCCESS();
+            clientPtr->execSqlAsync(
+                "select 1 as result",
+                [TEST_CTX](const drogon::orm::Result &r) {
+                    MANDATE(r.size() == 1);
+                },
+                expFunction);
+        } >>
         [TEST_CTX](const DrogonDbException &e) {
             FAULT("mysql - Prepare the test environment(0) what():" +
                   std::string(e.base().what()));
@@ -1229,6 +1358,37 @@ DROGON_TEST(MySQLTest)
         FAULT("mysql - ORM mapper synchronous interface(0) what():" +
               std::string(e.base().what()));
     }
+    /// 6.5 update by criteria. blocking
+    try
+    {
+        auto user = mapper.findByPrimaryKey(2);
+        SUCCESS();
+        Users newUser;
+        newUser.setId(user.getValueOfId());
+        newUser.setSalt("xxx");
+        newUser.setUserName(user.getValueOfUserName());
+        auto c = mapper.update(newUser);
+        MANDATE(c == 1);
+        c = mapper.updateBy({Users::Cols::_avatar_id, Users::Cols::_salt},
+                            Criteria(Users::Cols::_user_id,
+                                     CompareOperator::EQ,
+                                     "pg"),
+                            "avatar of pg",
+                            "salt of pg");
+        MANDATE(c == 1);
+        c = mapper.updateBy({Users::Cols::_avatar_id, Users::Cols::_salt},
+                            Criteria(Users::Cols::_user_id,
+                                     CompareOperator::EQ,
+                                     "none"),
+                            "avatar of none",
+                            "salt of none");
+        MANDATE(c == 0);
+    }
+    catch (const DrogonDbException &e)
+    {
+        FAULT("mysql - ORM mapper synchronous interface(1) what():" +
+              std::string(e.base().what()));
+    }
 #ifdef __cpp_impl_coroutine
     auto coro_test = [clientPtr, TEST_CTX]() -> drogon::Task<> {
         /// 7 Test coroutines.
@@ -1260,6 +1420,7 @@ DROGON_TEST(MySQLTest)
         }
     };
     drogon::sync_wait(coro_test());
+
 #endif
 }
 #endif
@@ -1272,8 +1433,15 @@ DROGON_TEST(SQLite3Test)
     REQUIRE(clientPtr != nullptr);
 
     // Prepare the test environment
-    *clientPtr << "DROP TABLE IF EXISTS users" >> [TEST_CTX](const Result &r) {
+    *clientPtr << "DROP TABLE IF EXISTS users" >> [TEST_CTX,
+                                                   clientPtr](const Result &r) {
         SUCCESS();
+        clientPtr->execSqlAsync(
+            "select 1 as result",
+            [TEST_CTX](const drogon::orm::Result &r) {
+                MANDATE(r.size() == 1);
+            },
+            expFunction);
     } >> [TEST_CTX](const DrogonDbException &e) {
         FAULT("sqlite3 - Prepare the test environment(0):  what():" +
               std::string(e.base().what()));
@@ -1906,6 +2074,7 @@ DROGON_TEST(SQLite3Test)
             trantor::EventLoop::getEventLoopOfCurrentThread(), 1.0s);
     };
     drogon::sync_wait(coro_test());
+
 #endif
 }
 #endif

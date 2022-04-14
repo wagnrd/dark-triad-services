@@ -34,7 +34,8 @@ class SSLContext;
  * @brief This class represents a TCP client.
  *
  */
-class TRANTOR_EXPORT TcpClient : NonCopyable
+class TRANTOR_EXPORT TcpClient : NonCopyable,
+                                 public std::enable_shared_from_this<TcpClient>
 {
   public:
     /**
@@ -199,6 +200,8 @@ class TRANTOR_EXPORT TcpClient : NonCopyable
      * not used.
      * @param sslConfCmds The commands used to call the SSL_CONF_cmd function in
      * OpenSSL.
+     * @param certPath The path of the certificate file.
+     * @param keyPath The path of the private key file.
      * @note It's well known that TLS 1.0 and 1.1 are not considered secure in
      * 2020. And it's a good practice to only use TLS 1.2 and above.
      */
@@ -206,7 +209,9 @@ class TRANTOR_EXPORT TcpClient : NonCopyable
                    bool validateCert = true,
                    std::string hostname = "",
                    const std::vector<std::pair<std::string, std::string>>
-                       &sslConfCmds = {});
+                       &sslConfCmds = {},
+                   const std::string &certPath = "",
+                   const std::string &keyPath = "");
 
   private:
     /// Not thread safe, but in loop

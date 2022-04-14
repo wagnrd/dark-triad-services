@@ -347,6 +347,43 @@ std::shared_ptr<SSLContext> newSSLServerContext(
     }
     return ctx;
 }
+std::shared_ptr<SSLContext> newSSLClientContext(
+    bool useOldTLS,
+    bool validateCert,
+    const std::string &certPath,
+    const std::string &keyPath,
+    const std::vector<std::pair<std::string, std::string>> &sslConfCmds)
+{
+    auto ctx = newSSLContext(useOldTLS, validateCert, sslConfCmds);
+    if (certPath.empty() || keyPath.empty())
+        return ctx;
+
+    auto r = SSL_CTX_use_certificate_chain_file(ctx->get(), certPath.c_str());
+    char errbuf[BUFSIZ];
+    if (!r)
+    {
+        ERR_error_string_n(ERR_get_error(), errbuf, sizeof(errbuf));
+        LOG_FATAL << "Reading certificate: " << errbuf;
+        abort();
+    }
+    r = SSL_CTX_use_PrivateKey_file(ctx->get(),
+                                    keyPath.c_str(),
+                                    SSL_FILETYPE_PEM);
+    if (!r)
+    {
+        ERR_error_string_n(ERR_get_error(), errbuf, sizeof(errbuf));
+        LOG_FATAL << "Reading private key: " << errbuf;
+        abort();
+    }
+    r = SSL_CTX_check_private_key(ctx->get());
+    if (!r)
+    {
+        ERR_error_string_n(ERR_get_error(), errbuf, sizeof(errbuf));
+        LOG_FATAL << "Checking private key matches certificate: " << errbuf;
+        abort();
+    }
+    return ctx;
+}
 }  // namespace trantor
 #else
 namespace trantor
@@ -1476,7 +1513,9 @@ void TcpConnectionImpl::sendFileInLoop(const BufferNodePtr &filePtr)
     {
         auto n = read(filePtr->sendFd_,
                       &(*fileBufferPtr_)[0],
-                      fileBufferPtr_->size());
+                      std::min(fileBufferPtr_->size(),
+                               static_cast<decltype(fileBufferPtr_->size())>(
+                                   filePtr->fileBytesToSend_)));
 #else
     _fseeki64(filePtr->sendFp_, filePtr->offset_, SEEK_SET);
     if (!fileBufferPtr_)
@@ -1485,9 +1524,12 @@ void TcpConnectionImpl::sendFileInLoop(const BufferNodePtr &filePtr)
     }
     while (filePtr->fileBytesToSend_ > 0)
     {
+        auto bytes = static_cast<decltype(fileBufferPtr_->size())>(
+            filePtr->fileBytesToSend_);
         auto n = fread(&(*fileBufferPtr_)[0],
                        1,
-                       fileBufferPtr_->size(),
+                       (fileBufferPtr_->size() < bytes ? fileBufferPtr_->size()
+                                                       : bytes),
                        filePtr->sendFp_);
 #endif
         if (n > 0)

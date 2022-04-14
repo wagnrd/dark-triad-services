@@ -3,6 +3,54 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.5.5] - 2022-02-19
+
+### API changes list
+
+### Changed
+
+- Move EventLoop::runAfter to a template.
+
+- Remove an assertion when removing channels.
+
+- Prevent TcpClient::removeConnection call on deleted TcpClient instance.
+
+- Wait for loop to exit in EventLoop destructor.
+
+- Add r-reference version of set-callback methods to TcpConnectionImpl.
+
+### Fixed
+
+- Fix a bug when closing connections on Windows/MacOS.
+
+- Fix logger causes if statement mismatch.
+
+## [1.5.4] - 2021-12-10
+
+### API changes list
+
+### Changed
+
+- Correctly handle the error of the getaddrinfo function
+
+### Fixed
+
+- Fix the error when sending partial files
+
+## [1.5.3] - 2021-11-28
+
+### API changes list
+
+- TcpClientImpl support SSL client certificate
+
+### Changed
+
+- Allow RVO in fromDbStringLocal
+
+### Fixed
+
+- Make sure resolvers are added when C-Ares is manually disabled
+
 ## [1.5.2] - 2021-10-17
 
 ### API changes list
@@ -364,7 +412,13 @@ All notable changes to this project will be documented in this file.
 
 ## [1.0.0-rc1] - 2019-06-11
 
-[Unreleased]: https://github.com/an-tao/trantor/compare/v1.5.2...HEAD
+[Unreleased]: https://github.com/an-tao/trantor/compare/v1.5.5...HEAD
+
+[1.5.5]: https://github.com/an-tao/trantor/compare/v1.5.4...v1.5.5
+
+[1.5.4]: https://github.com/an-tao/trantor/compare/v1.5.3...v1.5.4
+
+[1.5.3]: https://github.com/an-tao/trantor/compare/v1.5.2...v1.5.3
 
 [1.5.2]: https://github.com/an-tao/trantor/compare/v1.5.1...v1.5.2
 
