@@ -1,5 +1,5 @@
-#ifndef DATABASE_API_APP_CONFIG_HPP
-#define DATABASE_API_APP_CONFIG_HPP
+#ifndef DARK_TRIAD_SERVICES_APP_CONFIG_HPP
+#define DARK_TRIAD_SERVICES_APP_CONFIG_HPP
 
 #include <drogon_extended/configuration/config_model.hpp>
 
@@ -17,4 +17,4 @@ private:
     static std::string currentTimeAsString();
 };
 
-#endif //DATABASE_API_APP_CONFIG_HPP
+#endif //DARK_TRIAD_SERVICES_APP_CONFIG_HPP

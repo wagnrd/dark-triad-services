@@ -1,5 +1,5 @@
-#ifndef DATABASE_API_POSTGRES_CONFIG_HPP
-#define DATABASE_API_POSTGRES_CONFIG_HPP
+#ifndef DARK_TRIAD_SERVICES_POSTGRES_CONFIG_HPP
+#define DARK_TRIAD_SERVICES_POSTGRES_CONFIG_HPP
 
 #include <drogon_extended/configuration/config_model.hpp>
 
@@ -20,4 +20,4 @@ private:
     void configure_local(const Json::Value& json);
 };
 
-#endif //DATABASE_API_POSTGRES_CONFIG_HPP
+#endif //DARK_TRIAD_SERVICES_POSTGRES_CONFIG_HPP

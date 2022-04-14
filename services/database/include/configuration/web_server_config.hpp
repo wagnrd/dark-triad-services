@@ -1,5 +1,5 @@
-#ifndef DATABASE_API_WEB_SERVER_CONFIG_HPP
-#define DATABASE_API_WEB_SERVER_CONFIG_HPP
+#ifndef DARK_TRIAD_SERVICES_WEB_SERVER_CONFIG_HPP
+#define DARK_TRIAD_SERVICES_WEB_SERVER_CONFIG_HPP
 
 #include <drogon_extended/configuration/config_model.hpp>
 
@@ -14,4 +14,4 @@ public:
     explicit WebServerConfig(const Json::Value& json);
 };
 
-#endif //DATABASE_API_WEB_SERVER_CONFIG_HPP
+#endif //DARK_TRIAD_SERVICES_WEB_SERVER_CONFIG_HPP

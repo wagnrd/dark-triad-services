@@ -7,8 +7,13 @@
 drogon::Task<Character> CharactersDB::get_character(const std::string& userId, const std::string& characterName)
 {
     auto sql = fmt::format(
-            R"( SELECT * FROM character, appearance
-                WHERE character.name = appearance.character AND character.user_id = '{}' AND character.name = '{}';)",
+            R"(
+                SELECT * FROM character, appearance, equipment
+                WHERE character.user_id = '{}' AND
+                      character.name = '{}' AND
+                      character.name = appearance.character AND
+                      character.name = equipment.character;
+                )",
             userId,
             characterName
     );
@@ -24,8 +29,12 @@ drogon::Task<Character> CharactersDB::get_character(const std::string& userId, c
 drogon::Task<std::vector<Character>> CharactersDB::all_characters(const std::string& userId)
 {
     auto sql = fmt::format(
-            R"( SELECT * FROM character, appearance
-                WHERE character.name = appearance.character AND character.user_id = '{}';)",
+            R"(
+                SELECT * FROM character, appearance, equipment
+                WHERE character.user_id = '{}' AND
+                      character.name = appearance.character AND
+                      character.name = equipment.character;
+            )",
             userId
     );
     auto rows = co_await postgres->execSqlCoro(sql);
@@ -50,13 +59,22 @@ drogon::Task<> CharactersDB::create_character(const std::string& userId, const C
     auto encodedHairColor = CharactersDBColorUtil::encode_color(character.appearance.hairColor);
 
     auto sql = fmt::format(
-            R"( WITH tmp AS (
-                    INSERT INTO character (user_id, name, class) VALUES ('{}', '{}', '{}')
+            R"(
+                WITH tmp AS (
+                    INSERT INTO character
+                        (user_id, name, class)
+                    VALUES
+                        ('{}', '{}', '{}')
                 )
                 INSERT INTO appearance
 	                (character, gender, height, face_id, ears_id, hair_id, eyebrows_id, facial_hair_id, skin_color, eye_color, scar_color, tattoo_color, hair_color)
                 VALUES
-	                ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');)",
+	                ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');
+                INSERT INTO equipment
+                    (character, main_weapon, support_weapon, head_armour, torso_armour, shoulder_armour, arm_armour, leg_armour, foot_armour)
+                VALUES
+                    ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');
+            )",
             userId,
             character.name,
             character.className,
@@ -72,7 +90,16 @@ drogon::Task<> CharactersDB::create_character(const std::string& userId, const C
             encodedEyeColor,
             encodedScarColor,
             encodedTattooColor,
-            encodedHairColor
+            encodedHairColor,
+            character.name,
+            character.equipment.mainWeapon,
+            character.equipment.supportWeapon,
+            character.equipment.headArmour,
+            character.equipment.torsoArmour,
+            character.equipment.shoulderArmour,
+            character.equipment.armArmour,
+            character.equipment.legArmour,
+            character.equipment.footArmour
     );
     co_await postgres->execSqlCoro(sql);
 }
@@ -127,6 +154,16 @@ Character CharactersDB::build_character(const drogon::orm::Row& row)
                     .scarColor = CharactersDBColorUtil::decode_color(row["scar_color"].as<int>()),
                     .tattooColor = CharactersDBColorUtil::decode_color(row["tattoo_color"].as<int>()),
                     .hairColor = CharactersDBColorUtil::decode_color(row["hair_color"].as<int>())
+            },
+            .equipment {
+                .mainWeapon = row["main_weapon"].c_str(),
+                .supportWeapon = row["support_weapon"].c_str(),
+                .headArmour = row["head_armour"].c_str(),
+                .torsoArmour = row["torso_armour"].c_str(),
+                .shoulderArmour = row["shoulder_armour"].c_str(),
+                .armArmour = row["arm_armour"].c_str(),
+                .legArmour = row["leg_armour"].c_str(),
+                .footArmour = row["foot_armour"].c_str(),
             }
     };
 }

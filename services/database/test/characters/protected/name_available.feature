@@ -1,3 +1,4 @@
+@ignore
 Feature: Character name availability
 
   Background:
@@ -29,4 +30,4 @@ Feature: Character name availability
 
     Examples:
       | characterName      | characterClass |
-      | DbApiTestCharacter | Wizard         |
+      | DbApiTestCharacter | Warrior        |

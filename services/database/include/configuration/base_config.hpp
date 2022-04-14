@@ -1,5 +1,5 @@
-#ifndef DATABASE_API_BASE_CONFIG_HPP
-#define DATABASE_API_BASE_CONFIG_HPP
+#ifndef DARK_TRIAD_SERVICES_BASE_CONFIG_HPP
+#define DARK_TRIAD_SERVICES_BASE_CONFIG_HPP
 
 #include "app_config.hpp"
 #include "web_server_config.hpp"
@@ -14,4 +14,4 @@ public:
     explicit BaseConfig(const Json::Value& json);
 };
 
-#endif //DATABASE_API_BASE_CONFIG_HPP
+#endif //DARK_TRIAD_SERVICES_BASE_CONFIG_HPP

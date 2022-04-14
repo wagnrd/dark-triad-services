@@ -1,14 +1,14 @@
 #include <drogon_extended/json_mapper/json_converter.hpp>
 
-#include "include/converter/color_converter.hpp"
+#include "include/factory/color_factory.hpp"
 
-Color ColorConverter::from_json(const std::shared_ptr<Json::Value>& jsonPtr)
+Color ColorFactory::from_json(const std::shared_ptr<Json::Value>& jsonPtr)
 {
     const auto& json = JsonConverter::check_root(jsonPtr);
-    return ColorConverter::from_json(json);
+    return ColorFactory::from_json(json);
 }
 
-Color ColorConverter::from_json(const Json::Value& json)
+Color ColorFactory::from_json(const Json::Value& json)
 {
     Color color;
     color.r = JsonConverter::check(json, "r").asDouble();
@@ -19,7 +19,7 @@ Color ColorConverter::from_json(const Json::Value& json)
     return color;
 }
 
-std::shared_ptr<Json::Value> ColorConverter::to_json(const Color& color)
+std::shared_ptr<Json::Value> ColorFactory::to_json(const Color& color)
 {
     auto json = std::make_shared<Json::Value>();
     (*json)["r"] = color.r;

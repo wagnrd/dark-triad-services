@@ -1,5 +1,5 @@
-#ifndef DATABASE_API_CHARACTERS_EXCEPTION_MAPPER_HPP
-#define DATABASE_API_CHARACTERS_EXCEPTION_MAPPER_HPP
+#ifndef DARK_TRIAD_SERVICES_CHARACTERS_EXCEPTION_MAPPER_HPP
+#define DARK_TRIAD_SERVICES_CHARACTERS_EXCEPTION_MAPPER_HPP
 
 #include <drogon_extended/exception_mapper/exception_mapper.hpp>
 
@@ -9,4 +9,4 @@ public:
                            std::function<void(const drogon::HttpResponsePtr&)>& callback) override;
 };
 
-#endif //DATABASE_API_CHARACTERS_EXCEPTION_MAPPER_HPP
+#endif //DARK_TRIAD_SERVICES_CHARACTERS_EXCEPTION_MAPPER_HPP

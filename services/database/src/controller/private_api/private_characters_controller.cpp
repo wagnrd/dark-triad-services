@@ -2,7 +2,7 @@
 
 #include <include/service/characters/characters_service.hpp>
 #include <include/service/characters/model/character.hpp>
-#include <include/converter/character_converter.hpp>
+#include <include/factory/character_factory.hpp>
 #include "include/controller/private_api/private_characters_controller.hpp"
 
 drogon::Task<> private_api::characters::get_character(drogon::HttpRequestPtr request,
@@ -14,7 +14,7 @@ drogon::Task<> private_api::characters::get_character(drogon::HttpRequestPtr req
         apiKeyGuard.check(request);
 
         auto character = co_await charactersService->get_character(userId, characterName);
-        auto responseJson = CharacterConverter::to_json(character);
+        auto responseJson = CharacterFactory::to_json(character);
         callback(drogon::HttpResponse::newHttpJsonResponse(*responseJson));
     }
     catch (...)

@@ -1,5 +1,5 @@
-#ifndef DATABASE_API_CHARACTERS_HPP
-#define DATABASE_API_CHARACTERS_HPP
+#ifndef DARK_TRIAD_SERVICES_CHARACTERS_HPP
+#define DARK_TRIAD_SERVICES_CHARACTERS_HPP
 
 #include <drogon/HttpController.h>
 #include <drogon_extended/security/api_key_guard.hpp>
@@ -34,4 +34,4 @@ namespace private_api
     };
 }
 
-#endif //DATABASE_API_CHARACTERS_HPP
+#endif //DARK_TRIAD_SERVICES_CHARACTERS_HPP

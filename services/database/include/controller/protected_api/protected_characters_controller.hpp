@@ -1,5 +1,5 @@
-#ifndef DATABASE_API_CHARACTERS_HPP
-#define DATABASE_API_CHARACTERS_HPP
+#ifndef DARK_TRIAD_SERVICES_CHARACTERS_HPP
+#define DARK_TRIAD_SERVICES_CHARACTERS_HPP
 
 #include <drogon/drogon.h>
 
@@ -44,7 +44,7 @@ P90F2g0l/3qfb8+j5g==
             METHOD_ADD(characters::character_name_exists, "/{1}/exists", drogon::Get);
         METHOD_LIST_END
 
-        drogon::Task<> get_all_characters(const drogon::HttpRequestPtr request,
+        drogon::Task<> get_all_characters(drogon::HttpRequestPtr request,
                                           std::function<void(const drogon::HttpResponsePtr&)> callback);
 
         drogon::Task<> create_character(drogon::HttpRequestPtr request,
@@ -60,4 +60,4 @@ P90F2g0l/3qfb8+j5g==
     };
 }
 
-#endif //DATABASE_API_CHARACTERS_HPP
+#endif //DARK_TRIAD_SERVICES_CHARACTERS_HPP

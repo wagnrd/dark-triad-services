@@ -1,15 +1,15 @@
 #include <drogon_extended/json_mapper/json_converter.hpp>
-#include <include/converter/color_converter.hpp>
+#include <include/factory/color_factory.hpp>
 
-#include "include/converter/appearance_converter.hpp"
+#include "include/factory/appearance_factory.hpp"
 
-Appearance AppearanceConverter::from_json(const std::shared_ptr<Json::Value>& jsonPtr)
+Appearance AppearanceFactory::from_json(const std::shared_ptr<Json::Value>& jsonPtr)
 {
     const auto& json = JsonConverter::check_root(jsonPtr);
-    return AppearanceConverter::from_json(json);
+    return AppearanceFactory::from_json(json);
 }
 
-Appearance AppearanceConverter::from_json(const Json::Value& json)
+Appearance AppearanceFactory::from_json(const Json::Value& json)
 {
     Appearance appearance;
     appearance.gender = JsonConverter::check(json, "gender").asString();
@@ -20,20 +20,20 @@ Appearance AppearanceConverter::from_json(const Json::Value& json)
     appearance.eyebrowsId = JsonConverter::check(json, "eyebrowsId").asInt();
     appearance.facialHairId = JsonConverter::check(json, "facialHairId").asInt();
     const auto& skinColorJson = JsonConverter::check(json, "skinColor");
-    appearance.skinColor = ColorConverter::from_json(skinColorJson);
+    appearance.skinColor = ColorFactory::from_json(skinColorJson);
     const auto& eyeColorJson = JsonConverter::check(json, "eyeColor");
-    appearance.eyeColor = ColorConverter::from_json(eyeColorJson);
+    appearance.eyeColor = ColorFactory::from_json(eyeColorJson);
     const auto& scarColorJson = JsonConverter::check(json, "scarColor");
-    appearance.scarColor = ColorConverter::from_json(scarColorJson);
+    appearance.scarColor = ColorFactory::from_json(scarColorJson);
     const auto& tattooColorJson = JsonConverter::check(json, "tattooColor");
-    appearance.tattooColor = ColorConverter::from_json(tattooColorJson);
+    appearance.tattooColor = ColorFactory::from_json(tattooColorJson);
     const auto& hairColorJson = JsonConverter::check(json, "hairColor");
-    appearance.hairColor = ColorConverter::from_json(hairColorJson);
+    appearance.hairColor = ColorFactory::from_json(hairColorJson);
 
     return appearance;
 }
 
-std::shared_ptr<Json::Value> AppearanceConverter::to_json(const Appearance& appearance)
+std::shared_ptr<Json::Value> AppearanceFactory::to_json(const Appearance& appearance)
 {
     auto json = std::make_shared<Json::Value>();
     (*json)["gender"] = appearance.gender;
@@ -43,11 +43,11 @@ std::shared_ptr<Json::Value> AppearanceConverter::to_json(const Appearance& appe
     (*json)["hairId"] = appearance.hairId;
     (*json)["eyebrowsId"] = appearance.eyebrowsId;
     (*json)["facialHairId"] = appearance.facialHairId;
-    (*json)["skinColor"] = *ColorConverter::to_json(appearance.skinColor);
-    (*json)["eyeColor"] = *ColorConverter::to_json(appearance.eyeColor);
-    (*json)["scarColor"] = *ColorConverter::to_json(appearance.scarColor);
-    (*json)["tattooColor"] = *ColorConverter::to_json(appearance.tattooColor);
-    (*json)["hairColor"] = *ColorConverter::to_json(appearance.hairColor);
+    (*json)["skinColor"] = *ColorFactory::to_json(appearance.skinColor);
+    (*json)["eyeColor"] = *ColorFactory::to_json(appearance.eyeColor);
+    (*json)["scarColor"] = *ColorFactory::to_json(appearance.scarColor);
+    (*json)["tattooColor"] = *ColorFactory::to_json(appearance.tattooColor);
+    (*json)["hairColor"] = *ColorFactory::to_json(appearance.hairColor);
 
     return json;
 }

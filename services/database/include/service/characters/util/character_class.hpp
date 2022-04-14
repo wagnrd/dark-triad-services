@@ -1,5 +1,5 @@
-#ifndef DATABASE_API_CHARACTER_CLASS_HPP
-#define DATABASE_API_CHARACTER_CLASS_HPP
+#ifndef DARK_TRIAD_SERVICES_CHARACTER_CLASS_HPP
+#define DARK_TRIAD_SERVICES_CHARACTER_CLASS_HPP
 
 #include <string>
 #include <utility>
@@ -14,4 +14,4 @@ public:
     static bool is_class_invalid(std::string_view className);
 };
 
-#endif //DATABASE_API_CHARACTER_CLASS_HPP
+#endif //DARK_TRIAD_SERVICES_CHARACTER_CLASS_HPP

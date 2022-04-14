@@ -1,5 +1,5 @@
-#ifndef DATABASE_API_CHARACTERS_DB_HPP
-#define DATABASE_API_CHARACTERS_DB_HPP
+#ifndef DARK_TRIAD_SERVICES_CHARACTERS_DB_HPP
+#define DARK_TRIAD_SERVICES_CHARACTERS_DB_HPP
 
 #include <drogon/drogon.h>
 #include <drogon_extended/service/service.hpp>
@@ -23,4 +23,4 @@ private:
     Character build_character(const drogon::orm::Row& row);
 };
 
-#endif //DATABASE_API_CHARACTERS_DB_HPP
+#endif //DARK_TRIAD_SERVICES_CHARACTERS_DB_HPP
