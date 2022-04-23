@@ -17,8 +17,11 @@ public:
     drogon::Task<std::vector<Character>> all_characters(const std::string& userId);
     drogon::Task<void> create_character(const std::string& userId, CharacterCreation& characterCreation);
     void delete_character(const std::string& userId, const std::string& characterName);
-    drogon::Task<bool> character_name_exists(const std::string& characterName);
+    void delete_all_characters(const std::string& userId);
+
     void update_exp(const std::string& characterName, uint32_t exp);
+
+    drogon::Task<bool> character_name_exists(const std::string& characterName);
 
 private:
     void check_character_name(const std::string& characterName);

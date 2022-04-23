@@ -153,6 +153,15 @@ void CharactersDB::delete_character(const std::string& userId, const std::string
     postgres->execSqlAsyncFuture(sql);
 }
 
+void CharactersDB::delete_all_characters(const std::string& userId)
+{
+    auto sql = fmt::format(
+            "DELETE FROM character WHERE user_id = '{}'",
+            userId
+    );
+    postgres->execSqlAsyncFuture(sql);
+}
+
 drogon::Task<bool> CharactersDB::character_name_exists(const std::string& characterName)
 {
     auto sql = fmt::format(

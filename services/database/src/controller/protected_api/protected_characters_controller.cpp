@@ -86,6 +86,31 @@ drogon::Task<> protected_api::characters::delete_character(drogon::HttpRequestPt
     co_return;
 }
 
+drogon::Task<> protected_api::characters::delete_all_characters(drogon::HttpRequestPtr request,
+                                                                std::function<void(
+                                                                        const drogon::HttpResponsePtr&
+                                                                )> callback)
+{
+    try
+    {
+        auto decodedJwtToken = jwtTokenGuard.check(request);
+
+        auto userId = decodedJwtToken.get_payload_claim("email")
+                                     .as_string();
+        charactersService->delete_all_characters(userId);
+
+        auto response = drogon::HttpResponse::newHttpResponse();
+        response->setStatusCode(drogon::HttpStatusCode::k204NoContent);
+        callback(response);
+    }
+    catch (...)
+    {
+        HANDLE_GLOBAL_EXCEPTIONS
+    }
+
+    co_return;
+}
+
 drogon::Task<> protected_api::characters::character_name_exists(drogon::HttpRequestPtr request,
                                                                 std::function<void(
                                                                         const drogon::HttpResponsePtr&)> callback,

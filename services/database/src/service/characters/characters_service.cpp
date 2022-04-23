@@ -47,6 +47,11 @@ void CharactersService::delete_character(const std::string& userId, const std::s
     charactersDb->delete_character(userId, characterName);
 }
 
+void CharactersService::delete_all_characters(const std::string& userId)
+{
+    charactersDb->delete_all_characters(userId);
+}
+
 drogon::Task<bool> CharactersService::character_name_exists(const std::string& characterName)
 {
     co_return co_await charactersDb->character_name_exists(characterName);

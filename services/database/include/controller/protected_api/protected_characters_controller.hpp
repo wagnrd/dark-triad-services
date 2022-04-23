@@ -41,6 +41,7 @@ P90F2g0l/3qfb8+j5g==
             METHOD_ADD(characters::get_all_characters, "", drogon::Get);
             METHOD_ADD(characters::create_character, "", drogon::Post);
             METHOD_ADD(characters::delete_character, "/{1}", drogon::Delete);
+            METHOD_ADD(characters::delete_all_characters, "", drogon::Delete);
             METHOD_ADD(characters::character_name_exists, "/{1}/exists", drogon::Get);
         METHOD_LIST_END
 
@@ -53,6 +54,9 @@ P90F2g0l/3qfb8+j5g==
         drogon::Task<> delete_character(drogon::HttpRequestPtr request,
                                         std::function<void(const drogon::HttpResponsePtr&)> callback,
                                         const std::string& characterName);
+
+        drogon::Task<> delete_all_characters(drogon::HttpRequestPtr request,
+                                             std::function<void(const drogon::HttpResponsePtr&)> callback);
 
         drogon::Task<> character_name_exists(drogon::HttpRequestPtr request,
                                              std::function<void(const drogon::HttpResponsePtr&)> callback,

@@ -2,7 +2,7 @@ Feature: Create characters
 
   Background:
     * url baseUrl
-    * def login = callonce read('../../login/login.feature') { email: 'test1@test.com', password: 'Test1234' }
+    * def login = callonce read('../../utils/login.feature') { email: 'test1@test.com', password: 'Test1234' }
     * def authorization = login.token
     * configure headers = { Authorization: '#(authorization)' }
     * def defaultStatistic = { createdTimestamp: #number, lastUsedTimestamp: #number }
@@ -11,9 +11,13 @@ Feature: Create characters
     * def warriorEquipment = { mainWeapon: 'Shortsword', supportWeapon: 'Wooden Heater Shield', headArmour: '', shoulderArmour: '', torsoArmour: 'Recruit Chestplate', armArmour: 'Recruit Gloves', legArmour: 'Recruit Legwear', footArmour: 'Recruit Boots' }
     * def archerEquipment = { mainWeapon: 'Wooden Bow', supportWeapon: 'Wooden Arrows', headArmour: '', shoulderArmour: '', torsoArmour: 'Strayer Jacket', armArmour: 'Strayer Gloves', legArmour: 'Strayer Trousers', footArmour: 'Strayer Boots' }
 
+    * configure afterScenario =
+    """
+    function() { karate.call('../../utils/delete_all_characters.feature') }
+    """
     * def sleep =
     """
-    function(ms){ java.lang.Thread.sleep(ms) }
+    function(ms) { java.lang.Thread.sleep(ms) }
     """
 
   Scenario Outline: Create character with every valid class and valid name combinations
@@ -27,10 +31,6 @@ Feature: Create characters
     When method get
     Then status 200
     And match response == { characters: [ { name: '<characterName>', className: '<characterClass>', exp: 0, appearance: #(defaultAppearance), equipment: <equipment>, statistic: #(defaultStatistic) } ] }
-
-    Given path 'protected_api/characters/<characterName>'
-    When method delete
-    Then status 204
 
     Examples:
       | characterName             | characterClass | equipment           |
@@ -91,7 +91,7 @@ Feature: Create characters
     When method post
     Then status 201
 
-    * sleep(100);
+    * sleep(1000);
 
     Given path 'protected_api/characters'
     And request { name: '<characterName2>', className: '<characterClass2>', appearance: #(defaultAppearance) }
