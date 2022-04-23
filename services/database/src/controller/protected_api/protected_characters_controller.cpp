@@ -98,7 +98,9 @@ drogon::Task<> protected_api::characters::character_name_exists(drogon::HttpRequ
         bool characterNameExists = co_await charactersService->character_name_exists(characterName);
         auto response = drogon::HttpResponse::newHttpResponse();
 
-        if (!characterNameExists)
+        if (characterNameExists)
+            response->setStatusCode(drogon::HttpStatusCode::k204NoContent);
+        else
             response->setStatusCode(drogon::HttpStatusCode::k404NotFound);
 
         callback(response);
@@ -110,4 +112,3 @@ drogon::Task<> protected_api::characters::character_name_exists(drogon::HttpRequ
 
     co_return;
 }
-

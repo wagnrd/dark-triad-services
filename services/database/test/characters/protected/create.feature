@@ -2,13 +2,19 @@ Feature: Create characters
 
   Background:
     * url baseUrl
-    * def login = call read('../../login/login.feature') { email: 'test1@test.com', password: 'Test1234' }
+    * def login = callonce read('../../login/login.feature') { email: 'test1@test.com', password: 'Test1234' }
     * def authorization = login.token
     * configure headers = { Authorization: '#(authorization)' }
+    * def defaultStatistic = { createdTimestamp: #number, lastUsedTimestamp: #number }
     * def defaultColor = { r: 0.0, g: 0.0, b: 0.0, a: 0.0 }
     * def defaultAppearance = { gender: 'f', height: 1.0, faceId: 0, earsId: 0, eyebrowsId: 0, facialHairId: 0, hairId: 0, skinColor: #(defaultColor), eyeColor: #(defaultColor), scarColor: #(defaultColor), tattooColor: #(defaultColor), hairColor: #(defaultColor) }
     * def warriorEquipment = { mainWeapon: 'Shortsword', supportWeapon: 'Wooden Heater Shield', headArmour: '', shoulderArmour: '', torsoArmour: 'Recruit Chestplate', armArmour: 'Recruit Gloves', legArmour: 'Recruit Legwear', footArmour: 'Recruit Boots' }
     * def archerEquipment = { mainWeapon: 'Wooden Bow', supportWeapon: 'Wooden Arrows', headArmour: '', shoulderArmour: '', torsoArmour: 'Strayer Jacket', armArmour: 'Strayer Gloves', legArmour: 'Strayer Trousers', footArmour: 'Strayer Boots' }
+
+    * def sleep =
+    """
+    function(ms){ java.lang.Thread.sleep(ms) }
+    """
 
   Scenario Outline: Create character with every valid class and valid name combinations
 
@@ -20,7 +26,7 @@ Feature: Create characters
     Given path 'protected_api/characters'
     When method get
     Then status 200
-    And match response == { characters: [ { name: '<characterName>', className: '<characterClass>', exp: 0, appearance: #(defaultAppearance), equipment: <equipment> } ] }
+    And match response == { characters: [ { name: '<characterName>', className: '<characterClass>', exp: 0, appearance: #(defaultAppearance), equipment: <equipment>, statistic: #(defaultStatistic) } ] }
 
     Given path 'protected_api/characters/<characterName>'
     When method delete
@@ -64,7 +70,7 @@ Feature: Create characters
     Given path 'protected_api/characters'
     When method get
     Then status 200
-    And match response == { characters: [ { name: '<characterName>', className: '<characterClass1>', exp: 0, appearance: #(defaultAppearance), equipment: #(warriorEquipment) } ] }
+    And match response == { characters: [ { name: '<characterName>', className: '<characterClass1>', exp: 0, appearance: #(defaultAppearance), equipment: #(warriorEquipment), statistic: #(defaultStatistic) } ] }
 
     Given path 'protected_api/characters/<characterName>'
     When method delete
@@ -85,6 +91,8 @@ Feature: Create characters
     When method post
     Then status 201
 
+    * sleep(100);
+
     Given path 'protected_api/characters'
     And request { name: '<characterName2>', className: '<characterClass2>', appearance: #(defaultAppearance) }
     When method post
@@ -93,7 +101,11 @@ Feature: Create characters
     Given path 'protected_api/characters'
     When method get
     Then status 200
-    And match response == { characters: [ { name: '<characterName1>', className: '<characterClass1>', exp: 0, appearance: #(defaultAppearance), equipment: #(warriorEquipment) }, { name: '<characterName2>', className: '<characterClass2>', exp: 0, appearance: #(defaultAppearance), equipment: #(archerEquipment) } ] }
+    And match response == { characters: [ { name: '<characterName2>', className: '<characterClass2>', exp: 0, appearance: #(defaultAppearance), equipment: <characterEquipment2>, statistic: #(defaultStatistic) }, { name: '<characterName1>', className: '<characterClass1>', exp: 0, appearance: #(defaultAppearance), equipment: <characterEquipment1>, statistic: #(defaultStatistic) } ] }
+    And def first = response.characters[0].statistic
+    And def second = response.characters[1].statistic
+    And assert first.createdTimestamp >= second.createdTimestamp
+    And assert first.lastUsedTimestamp >= second.lastUsedTimestamp
 
     Given path 'protected_api/characters/<characterName1>'
     When method delete
@@ -104,8 +116,8 @@ Feature: Create characters
     Then status 204
 
     Examples:
-      | characterName1      | characterClass1 | characterName2      | characterClass2 |
-      | DbApiTestCharacter1 | Warrior         | DbApiTestCharacter2 | Archer          |
+      | characterName1      | characterClass1 | characterEquipment1 | characterName2      | characterClass2 | characterEquipment2 |
+      | DbApiTestCharacter1 | Warrior         | #(warriorEquipment) | DbApiTestCharacter2 | Archer          | #(archerEquipment)  |
 
   Scenario: Get error when trying to create an empty character
 

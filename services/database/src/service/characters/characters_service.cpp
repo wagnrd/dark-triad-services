@@ -11,7 +11,17 @@ drogon::Task<Character> CharactersService::get_character(const std::string& user
 
 drogon::Task<std::vector<Character>> CharactersService::all_characters(const std::string& userId)
 {
-    co_return co_await charactersDb->all_characters(userId);
+    auto characters = co_await charactersDb->all_characters(userId);
+
+    std::sort(
+            characters.begin(),
+            characters.end(),
+            [](const Character& character1, const Character& character2) {
+                return character1.statistic.lastUsedTimestamp > character2.statistic.lastUsedTimestamp;
+            }
+    );
+
+    co_return characters;
 }
 
 drogon::Task<> CharactersService::create_character(const std::string& userId, CharacterCreation& characterCreation)

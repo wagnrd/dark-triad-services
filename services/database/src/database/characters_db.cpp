@@ -8,11 +8,16 @@ drogon::Task<Character> CharactersDB::get_character(const std::string& userId, c
 {
     auto sql = fmt::format(
             R"(
-                SELECT * FROM character, appearance, equipment
+                SELECT *
+                FROM character,
+                     appearance,
+                     equipment,
+                     statistic
                 WHERE character.user_id = '{}' AND
                       character.name = '{}' AND
                       character.name = appearance.character AND
-                      character.name = equipment.character;
+                      character.name = equipment.character AND
+                      character.name = statistic.character;
                 )",
             userId,
             characterName
@@ -30,10 +35,15 @@ drogon::Task<std::vector<Character>> CharactersDB::all_characters(const std::str
 {
     auto sql = fmt::format(
             R"(
-                SELECT * FROM character, appearance, equipment
+                SELECT *
+                FROM character,
+                     appearance,
+                     equipment,
+                     statistic
                 WHERE character.user_id = '{}' AND
                       character.name = appearance.character AND
-                      character.name = equipment.character;
+                      character.name = equipment.character AND
+                      character.name = statistic.character;
             )",
             userId
     );
@@ -52,6 +62,10 @@ drogon::Task<std::vector<Character>> CharactersDB::all_characters(const std::str
 
 drogon::Task<> CharactersDB::create_character(const std::string& userId, const Character& character)
 {
+    auto currentTimestamp = std::chrono::duration_cast<std::chrono::seconds>(
+            std::chrono::system_clock::now().time_since_epoch()
+    ).count();
+
     auto encodedSkinColor = CharactersDBColorUtil::encode_color(character.appearance.skinColor);
     auto encodedEyeColor = CharactersDBColorUtil::encode_color(character.appearance.eyeColor);
     auto encodedScarColor = CharactersDBColorUtil::encode_color(character.appearance.scarColor);
@@ -110,10 +124,23 @@ drogon::Task<> CharactersDB::create_character(const std::string& userId, const C
             character.equipment.footArmour
     );
 
+    auto sqlCreateStatistic = fmt::format(
+            R"(
+                INSERT INTO statistic
+                    (character, created_timestamp, last_used_timestamp)
+                VALUES
+                    ('{}', '{}', '{}');
+            )",
+            character.name,
+            currentTimestamp,
+            currentTimestamp
+    );
+
     auto transaction = postgres->newTransaction();
     co_await transaction->execSqlCoro(sqlCreateBaseCharacter);
     co_await transaction->execSqlCoro(sqlCreateAppearance);
     co_await transaction->execSqlCoro(sqlCreateEquipment);
+    co_await transaction->execSqlCoro(sqlCreateStatistic);
 }
 
 void CharactersDB::delete_character(const std::string& userId, const std::string& characterName)
@@ -152,15 +179,15 @@ Character CharactersDB::build_character(const drogon::orm::Row& row)
     return Character{
             .name = row["name"].c_str(),
             .className = row["class"].c_str(),
-            .exp = row["exp"].as<uint32_t>(),
+            .exp = row["exp"].as<uint64_t>(),
             .appearance{
                     .gender = row["gender"].c_str(),
                     .height = row["height"].as<double>(),
-                    .faceId = row["face_id"].as<int>(),
-                    .earsId = row["ears_id"].as<int>(),
-                    .hairId = row["hair_id"].as<int>(),
-                    .eyebrowsId = row["eyebrows_id"].as<int>(),
-                    .facialHairId = row["facial_hair_id"].as<int>(),
+                    .faceId = row["face_id"].as<int32_t>(),
+                    .earsId = row["ears_id"].as<int32_t>(),
+                    .hairId = row["hair_id"].as<int32_t>(),
+                    .eyebrowsId = row["eyebrows_id"].as<int32_t>(),
+                    .facialHairId = row["facial_hair_id"].as<int32_t>(),
                     .skinColor = CharactersDBColorUtil::decode_color(row["skin_color"].as<int>()),
                     .eyeColor = CharactersDBColorUtil::decode_color(row["eye_color"].as<int>()),
                     .scarColor = CharactersDBColorUtil::decode_color(row["scar_color"].as<int>()),
@@ -175,7 +202,11 @@ Character CharactersDB::build_character(const drogon::orm::Row& row)
                     .shoulderArmour = row["shoulder_armour"].c_str(),
                     .armArmour = row["arm_armour"].c_str(),
                     .legArmour = row["leg_armour"].c_str(),
-                    .footArmour = row["foot_armour"].c_str(),
+                    .footArmour = row["foot_armour"].c_str()
+            },
+            .statistic {
+                    .createdTimestamp = row["created_timestamp"].as<uint64_t>(),
+                    .lastUsedTimestamp = row["last_used_timestamp"].as<uint64_t>(),
             }
     };
 }

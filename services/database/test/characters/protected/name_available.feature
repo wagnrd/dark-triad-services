@@ -2,7 +2,7 @@ Feature: Character name availability
 
   Background:
     * url baseUrl
-    * def login = call read('../../login/login.feature') { email: 'test1@test.com', password: 'Test1234' }
+    * def login = callonce read('../../login/login.feature') { email: 'test1@test.com', password: 'Test1234' }
     * def authorization = login.token
     * configure headers = { Authorization: '#(authorization)' }
     * def defaultColor = { r: 0.0, g: 0.0, b: 0.0, a: 0.0 }
@@ -21,12 +21,17 @@ Feature: Character name availability
 
     Given path 'protected_api/characters/<characterName>/exists'
     When method get
-    Then status 200
+    Then status 204
 
     Given path 'protected_api/characters/<characterName>'
     When method delete
     Then status 204
 
+    Given path 'protected_api/characters/<characterName>/exists'
+    When method get
+    Then status 404
+
     Examples:
-      | characterName      | characterClass |
-      | DbApiTestCharacter | Warrior        |
+      | characterName       | characterClass |
+      | DbApiTestCharacter1 | Warrior        |
+      | DbApiTestCharacter2 | Archer         |
