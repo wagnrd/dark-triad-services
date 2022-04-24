@@ -37,7 +37,7 @@ jobs:
         run: |
           mkdir cmake-build-release
           cd cmake-build-release
-          cmake -DCMAKE_BUILD_TYPE=Release -G "CodeBlocks - Unix Makefiles" ..
+          cmake -DCMAKE_BUILD_TYPE=Release -G "Unix Makefiles" ..
           cd ..
           cmake --build ./cmake-build-release -- -j $(nproc)
 
