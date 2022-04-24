@@ -13,7 +13,5 @@ function fn() {
         config.apiKey = java.lang.System.getenv('API_KEY');
     }
 
-    karate.configure('logPrettyResponse', true);
-
     return config;
 }
