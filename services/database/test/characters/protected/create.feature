@@ -3,8 +3,7 @@ Feature: Create characters
   Background:
     * url baseUrl
     * def login = callonce read('../../utils/login.feature') { email: 'test1@test.com', password: 'Test1234' }
-    * def authorization = login.token
-    * configure headers = { Authorization: '#(authorization)' }
+    * configure headers = { Authorization: #(login.authorization) }
     * def defaultStatistic = { createdTimestamp: #number, lastUsedTimestamp: #number }
     * def defaultColor = { r: 0.0, g: 0.0, b: 0.0, a: 0.0 }
     * def defaultAppearance = { gender: 'f', height: 1.0, faceId: 0, earsId: 0, eyebrowsId: 0, facialHairId: 0, hairId: 0, skinColor: #(defaultColor), eyeColor: #(defaultColor), scarColor: #(defaultColor), tattooColor: #(defaultColor), hairColor: #(defaultColor) }
@@ -20,7 +19,7 @@ Feature: Create characters
     function(ms) { java.lang.Thread.sleep(ms) }
     """
 
-  Scenario Outline: Create character with every valid class and valid name combinations
+  Scenario Outline: Create character with every valid class and valid name combinations and delete it
 
     Given path 'protected_api/characters'
     And request { name: '<characterName>', className: '<characterClass>', appearance: #(defaultAppearance) }
@@ -31,6 +30,14 @@ Feature: Create characters
     When method get
     Then status 200
     And match response == { characters: [ { name: '<characterName>', className: '<characterClass>', exp: 0, appearance: #(defaultAppearance), equipment: <equipment>, statistic: #(defaultStatistic) } ] }
+
+    Given path 'protected_api/characters/<characterName>'
+    When method delete
+    Then status 204
+
+    Given path 'protected_api/characters'
+    When method get
+    Then status 404
 
     Examples:
       | characterName             | characterClass | equipment           |
@@ -72,10 +79,6 @@ Feature: Create characters
     Then status 200
     And match response == { characters: [ { name: '<characterName>', className: '<characterClass1>', exp: 0, appearance: #(defaultAppearance), equipment: #(warriorEquipment), statistic: #(defaultStatistic) } ] }
 
-    Given path 'protected_api/characters/<characterName>'
-    When method delete
-    Then status 204
-
     Examples:
       | characterName      | characterClass1 | characterClass2 |
       | DbApiTestCharacter | Warrior         | Archer          |
@@ -106,14 +109,6 @@ Feature: Create characters
     And def second = response.characters[1].statistic
     And assert first.createdTimestamp >= second.createdTimestamp
     And assert first.lastUsedTimestamp >= second.lastUsedTimestamp
-
-    Given path 'protected_api/characters/<characterName1>'
-    When method delete
-    Then status 204
-
-    Given path 'protected_api/characters/<characterName2>'
-    When method delete
-    Then status 204
 
     Examples:
       | characterName1      | characterClass1 | characterEquipment1 | characterName2      | characterClass2 | characterEquipment2 |

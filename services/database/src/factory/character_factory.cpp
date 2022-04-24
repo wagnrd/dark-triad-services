@@ -10,7 +10,7 @@ std::shared_ptr<Json::Value> CharacterFactory::to_json(const Character& characte
     auto json = std::make_shared<Json::Value>();
     (*json)["name"] = character.name;
     (*json)["className"] = character.className;
-    (*json)["exp"] = character.exp;
+    (*json)["exp"] = static_cast<Json::Value::UInt64>(character.exp);
     (*json)["appearance"] = *AppearanceFactory::to_json(character.appearance);
     (*json)["equipment"] = *EquipmentFactory::to_json(character.equipment);
     (*json)["statistic"] = *StatisticFactory::to_json(character.statistic);

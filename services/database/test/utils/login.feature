@@ -19,4 +19,4 @@ Feature: Login
     When method post
     Then status 200
     And match response == { id_token: #string, token_type: #string }
-    * def token = response.token_type + ' ' + response.id_token
+    * def authorization = response.token_type + ' ' + response.id_token
