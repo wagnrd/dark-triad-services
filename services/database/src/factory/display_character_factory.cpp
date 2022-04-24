@@ -7,7 +7,7 @@
 std::shared_ptr<Json::Value> DisplayCharacterFactory::to_json(const DisplayCharacter& character)
 {
     auto json = std::make_shared<Json::Value>();
-    (*json)["lastUsedTimestamp"] = character.lastUsedTimestamp;
+    (*json)["lastUsedTimestamp"] = static_cast<Json::Value::UInt64>(character.lastUsedTimestamp);
     (*json)["name"] = character.name;
     (*json)["className"] = character.className;
     (*json)["exp"] = static_cast<Json::Value::UInt64>(character.exp);
