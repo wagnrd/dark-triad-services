@@ -5,6 +5,8 @@ Feature: Update experience points
     * def login = callonce read('../../utils/login.feature') { email: 'test@test.com', password: 'Test1234' }
     * def defaultColor = { r: 0.0, g: 0.0, b: 0.0, a: 0.0 }
     * def defaultAppearance = { gender: 'f', height: 1.0, faceId: 0, earsId: 0, eyebrowsId: 0, facialHairId: 0, hairId: 0, skinColor: #(defaultColor), eyeColor: #(defaultColor), scarColor: #(defaultColor), tattooColor: #(defaultColor), hairColor: #(defaultColor) }
+    * def warriorEquipment = { mainWeapon: 'Shortsword', supportWeapon: 'Wooden Heater Shield', headArmour: '', shoulderArmour: '', torsoArmour: 'Recruit Chestplate', armArmour: 'Recruit Gloves', legArmour: 'Recruit Legwear', footArmour: 'Recruit Boots' }
+    * def archerEquipment = { mainWeapon: 'Wooden Bow', supportWeapon: 'Wooden Arrows', headArmour: '', shoulderArmour: '', torsoArmour: 'Strayer Jacket', armArmour: 'Strayer Gloves', legArmour: 'Strayer Trousers', footArmour: 'Strayer Boots' }
 
     * configure afterScenario =
     """
@@ -28,9 +30,9 @@ Feature: Update experience points
     And headers { Authorization: '#(apiKey)'}
     When method get
     Then status 200
-    And match response.exp == <exp>
+    And match response == { name: '<characterName>', className: '<characterClass>', exp: <exp>, appearance: #(defaultAppearance), equipment: <equipment> }
 
     Examples:
-      | characterName      | characterClass | exp        |
-      | DbApiTestCharacter | Warrior        | 100        |
-      | DbApiTestCharacter | Warrior        | 2000000000 |
+      | characterName      | characterClass | equipment           | exp        |
+      | DbApiTestCharacter | Warrior        | #(warriorEquipment) | 100        |
+      | DbApiTestCharacter | Archer         | #(archerEquipment)  | 2000000000 |

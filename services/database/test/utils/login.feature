@@ -18,5 +18,5 @@ Feature: Login
     And request { session_id: #(sessionId), challenge_response: #(challengeResponse), email: '#(email)', password: '#(password)' }
     When method post
     Then status 200
-    And match response == { id_token: #string, token_type: #string }
+    And match response == { id_token: #string, token_type: 'Bearer' }
     * def authorization = response.token_type + ' ' + response.id_token
