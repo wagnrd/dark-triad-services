@@ -1,6 +1,7 @@
 #ifndef DARK_TRIAD_SERVICES_STATISTIC_FACTORY_HPP
 #define DARK_TRIAD_SERVICES_STATISTIC_FACTORY_HPP
 
+#include <memory>
 #include <json/value.h>
 
 #include "include/service/characters/model/statistic.hpp"
