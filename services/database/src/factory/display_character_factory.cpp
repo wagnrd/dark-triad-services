@@ -1,10 +1,13 @@
-#include "include/factory/character_factory.hpp"
-#include "include/factory/appearance_factory.hpp"
-#include "include/factory/equipment_factory.hpp"
+#include "drogon_extended/json_mapper/json_converter.hpp"
 
-std::shared_ptr<Json::Value> CharacterFactory::to_json(const Character& character)
+#include <include/factory/display_character_factory.hpp>
+#include <include/factory/appearance_factory.hpp>
+#include <include/factory/equipment_factory.hpp>
+
+std::shared_ptr<Json::Value> DisplayCharacterFactory::to_json(const DisplayCharacter& character)
 {
     auto json = std::make_shared<Json::Value>();
+    (*json)["lastUsedTimestamp"] = character.lastUsedTimestamp;
     (*json)["name"] = character.name;
     (*json)["className"] = character.className;
     (*json)["exp"] = static_cast<Json::Value::UInt64>(character.exp);
@@ -14,9 +17,10 @@ std::shared_ptr<Json::Value> CharacterFactory::to_json(const Character& characte
     return json;
 }
 
-Character CharacterFactory::from_orm(const drogon::orm::Row& row)
+DisplayCharacter DisplayCharacterFactory::from_orm(const drogon::orm::Row& row)
 {
-    return Character{
+    return DisplayCharacter{
+            .lastUsedTimestamp = row["last_used_timestamp"].as<uint64_t>(),
             .name = row["name"].c_str(),
             .className = row["class"].c_str(),
             .exp = row["exp"].as<uint64_t>(),

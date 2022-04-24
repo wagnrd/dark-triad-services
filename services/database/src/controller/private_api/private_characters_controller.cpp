@@ -2,18 +2,18 @@
 
 #include <include/service/characters/characters_service.hpp>
 #include <include/service/characters/model/character.hpp>
-#include <include/factory/character_factory.hpp>
+#include "include/factory/character_factory.hpp"
 #include "include/controller/private_api/private_characters_controller.hpp"
 
 drogon::Task<> private_api::characters::get_character(drogon::HttpRequestPtr request,
                                                       std::function<void(const drogon::HttpResponsePtr&)> callback,
-                                                      const std::string& characterName, const std::string& userId)
+                                                      const std::string& characterName)
 {
     try
     {
         apiKeyGuard.check(request);
 
-        auto character = co_await charactersService->get_character(userId, characterName);
+        auto character = co_await charactersService->get_character(characterName);
         auto responseJson = CharacterFactory::to_json(character);
         callback(drogon::HttpResponse::newHttpJsonResponse(*responseJson));
     }
@@ -46,4 +46,3 @@ drogon::Task<void> private_api::characters::update_exp(drogon::HttpRequestPtr re
 
     co_return;
 }
-

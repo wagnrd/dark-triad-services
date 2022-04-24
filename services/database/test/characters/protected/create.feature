@@ -2,9 +2,8 @@ Feature: Create characters
 
   Background:
     * url baseUrl
-    * def login = callonce read('../../utils/login.feature') { email: 'test1@test.com', password: 'Test1234' }
+    * def login = callonce read('../../utils/login.feature') { email: 'test@test.com', password: 'Test1234' }
     * configure headers = { Authorization: #(login.authorization) }
-    * def defaultStatistic = { createdTimestamp: #number, lastUsedTimestamp: #number }
     * def defaultColor = { r: 0.0, g: 0.0, b: 0.0, a: 0.0 }
     * def defaultAppearance = { gender: 'f', height: 1.0, faceId: 0, earsId: 0, eyebrowsId: 0, facialHairId: 0, hairId: 0, skinColor: #(defaultColor), eyeColor: #(defaultColor), scarColor: #(defaultColor), tattooColor: #(defaultColor), hairColor: #(defaultColor) }
     * def warriorEquipment = { mainWeapon: 'Shortsword', supportWeapon: 'Wooden Heater Shield', headArmour: '', shoulderArmour: '', torsoArmour: 'Recruit Chestplate', armArmour: 'Recruit Gloves', legArmour: 'Recruit Legwear', footArmour: 'Recruit Boots' }
@@ -14,22 +13,18 @@ Feature: Create characters
     """
     function() { karate.call('../../utils/delete_all_characters.feature') }
     """
-    * def sleep =
-    """
-    function(ms) { java.lang.Thread.sleep(ms) }
-    """
 
   Scenario Outline: Create character with every valid class and valid name combinations and delete it
 
     Given path 'protected_api/characters'
-    And request { name: '<characterName>', className: '<characterClass>', appearance: #(defaultAppearance) }
+    And request { name: <characterName>, className: <characterClass>, appearance: #(defaultAppearance) }
     When method post
     Then status 201
 
     Given path 'protected_api/characters'
     When method get
     Then status 200
-    And match response == { characters: [ { name: '<characterName>', className: '<characterClass>', exp: 0, appearance: #(defaultAppearance), equipment: <equipment>, statistic: #(defaultStatistic) } ] }
+    And match response == { characters: [ { lastUsedTimestamp: #number, name: <characterName>, className: <characterClass>, exp: 0, appearance: #(defaultAppearance), equipment: <equipment> } ] }
 
     Given path 'protected_api/characters/<characterName>'
     When method delete
@@ -49,7 +44,7 @@ Feature: Create characters
   Scenario Outline: Get an error when trying to create a character with an invalid class
 
     Given path 'protected_api/characters'
-    And request { name: '<characterName>', className: '<invalidCharacterClass>', appearance: #(defaultAppearance) }
+    And request { name: <characterName>, className: <invalidCharacterClass>, appearance: #(defaultAppearance) }
     When method post
     Then status 400
 
@@ -65,19 +60,19 @@ Feature: Create characters
   Scenario Outline: Get an error when trying to create characters with the same name
 
     Given path 'protected_api/characters'
-    And request { name: '<characterName>', className: '<characterClass1>', appearance: #(defaultAppearance) }
+    And request { name: <characterName>, className: <characterClass1>, appearance: #(defaultAppearance) }
     When method post
     Then status 201
 
     Given path 'protected_api/characters'
-    And request { name: '<characterName>', className: '<characterClass2>', appearance: #(defaultAppearance) }
+    And request { name: <characterName>, className: <characterClass2>, appearance: #(defaultAppearance) }
     When method post
     Then status 400
 
     Given path 'protected_api/characters'
     When method get
     Then status 200
-    And match response == { characters: [ { name: '<characterName>', className: '<characterClass1>', exp: 0, appearance: #(defaultAppearance), equipment: #(warriorEquipment), statistic: #(defaultStatistic) } ] }
+    And match response == { characters: [ { lastUsedTimestamp: #number, name: <characterName>, className: <characterClass1>, exp: 0, appearance: #(defaultAppearance), equipment: #(warriorEquipment) } ] }
 
     Examples:
       | characterName      | characterClass1 | characterClass2 |
@@ -90,25 +85,19 @@ Feature: Create characters
     Then status 404
 
     Given path 'protected_api/characters'
-    And request { name: '<characterName1>', className: '<characterClass1>', appearance: #(defaultAppearance) }
+    And request { name: <characterName1>, className: <characterClass1>, appearance: #(defaultAppearance) }
     When method post
     Then status 201
 
-    * sleep(1000);
-
     Given path 'protected_api/characters'
-    And request { name: '<characterName2>', className: '<characterClass2>', appearance: #(defaultAppearance) }
+    And request { name: <characterName2>, className: <characterClass2>, appearance: #(defaultAppearance) }
     When method post
     Then status 201
 
     Given path 'protected_api/characters'
     When method get
     Then status 200
-    And match response == { characters: [ { name: '<characterName2>', className: '<characterClass2>', exp: 0, appearance: #(defaultAppearance), equipment: <characterEquipment2>, statistic: #(defaultStatistic) }, { name: '<characterName1>', className: '<characterClass1>', exp: 0, appearance: #(defaultAppearance), equipment: <characterEquipment1>, statistic: #(defaultStatistic) } ] }
-    And def first = response.characters[0].statistic
-    And def second = response.characters[1].statistic
-    And assert first.createdTimestamp >= second.createdTimestamp
-    And assert first.lastUsedTimestamp >= second.lastUsedTimestamp
+    And match response == { characters: [ { lastUsedTimestamp: #number, name: <characterName1>, className: <characterClass1>, exp: 0, appearance: #(defaultAppearance), equipment: <characterEquipment1> }, { lastUsedTimestamp: #number, name: <characterName2>, className: <characterClass2>, exp: 0, appearance: #(defaultAppearance), equipment: <characterEquipment2> } ] }
 
     Examples:
       | characterName1      | characterClass1 | characterEquipment1 | characterName2      | characterClass2 | characterEquipment2 |
@@ -128,7 +117,7 @@ Feature: Create characters
   Scenario Outline: Get an error when trying to create a character with invalid name
 
     Given path 'protected_api/characters'
-    And request { name: '<characterName>', className: '<characterClass>', appearance: #(defaultAppearance) }
+    And request { name: <characterName>, className: <characterClass>, appearance: #(defaultAppearance) }
     When method post
     Then status 400
 

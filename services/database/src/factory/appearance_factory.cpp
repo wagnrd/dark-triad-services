@@ -2,6 +2,7 @@
 #include <include/factory/color_factory.hpp>
 
 #include "include/factory/appearance_factory.hpp"
+#include "include/factory/util/characters_db_color_util.hpp"
 
 Appearance AppearanceFactory::from_json(const std::shared_ptr<Json::Value>& jsonPtr)
 {
@@ -50,4 +51,22 @@ std::shared_ptr<Json::Value> AppearanceFactory::to_json(const Appearance& appear
     (*json)["hairColor"] = *ColorFactory::to_json(appearance.hairColor);
 
     return json;
+}
+
+Appearance AppearanceFactory::from_orm(const drogon::orm::Row& row)
+{
+    return Appearance{
+            .gender = row["gender"].c_str(),
+            .height = row["height"].as<double>(),
+            .faceId = row["face_id"].as<int32_t>(),
+            .earsId = row["ears_id"].as<int32_t>(),
+            .hairId = row["hair_id"].as<int32_t>(),
+            .eyebrowsId = row["eyebrows_id"].as<int32_t>(),
+            .facialHairId = row["facial_hair_id"].as<int32_t>(),
+            .skinColor = CharactersDBColorUtil::decode_color(row["skin_color"].as<int>()),
+            .eyeColor = CharactersDBColorUtil::decode_color(row["eye_color"].as<int>()),
+            .scarColor = CharactersDBColorUtil::decode_color(row["scar_color"].as<int>()),
+            .tattooColor = CharactersDBColorUtil::decode_color(row["tattoo_color"].as<int>()),
+            .hairColor = CharactersDBColorUtil::decode_color(row["hair_color"].as<int>())
+    };
 }

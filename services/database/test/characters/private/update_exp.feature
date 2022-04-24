@@ -2,7 +2,7 @@ Feature: Update experience points
 
   Background:
     * url baseUrl
-    * def login = callonce read('../../utils/login.feature') { email: 'test1@test.com', password: 'Test1234' }
+    * def login = callonce read('../../utils/login.feature') { email: 'test@test.com', password: 'Test1234' }
     * def defaultColor = { r: 0.0, g: 0.0, b: 0.0, a: 0.0 }
     * def defaultAppearance = { gender: 'f', height: 1.0, faceId: 0, earsId: 0, eyebrowsId: 0, facialHairId: 0, hairId: 0, skinColor: #(defaultColor), eyeColor: #(defaultColor), scarColor: #(defaultColor), tattooColor: #(defaultColor), hairColor: #(defaultColor) }
 
@@ -14,7 +14,7 @@ Feature: Update experience points
   Scenario Outline: Update the experience points of a character
 
     Given path 'protected_api/characters'
-    And headers { Authorization: '#(login.authorization)' }
+    And headers { Authorization: #(login.authorization) }
     And request { name: '<characterName>', className: '<characterClass>', appearance: #(defaultAppearance) }
     When method post
     Then status 201
@@ -24,13 +24,13 @@ Feature: Update experience points
     When method put
     Then status 204
 
-    Given path 'private_api/characters/<characterName>/userId/<userId>'
+    Given path 'private_api/characters/<characterName>'
     And headers { Authorization: '#(apiKey)'}
     When method get
     Then status 200
     And match response.exp == <exp>
 
     Examples:
-      | userId         | characterName      | characterClass | exp        |
-      | test1@test.com | DbApiTestCharacter | Warrior        | 100        |
-      | test1@test.com | DbApiTestCharacter | Warrior        | 2000000000 |
+      | characterName      | characterClass | exp        |
+      | DbApiTestCharacter | Warrior        | 100        |
+      | DbApiTestCharacter | Warrior        | 2000000000 |

@@ -1,12 +1,13 @@
-#ifndef DARK_TRIAD_SERVICES_CHARACTER_HPP
-#define DARK_TRIAD_SERVICES_CHARACTER_HPP
+#ifndef DARK_TRIAD_SERVICES_DISPLAY_CHARACTER_HPP
+#define DARK_TRIAD_SERVICES_DISPLAY_CHARACTER_HPP
 
 #include "appearance.hpp"
 #include "equipment.hpp"
 #include "statistic.hpp"
 
-class Character {
+class DisplayCharacter {
 public:
+    uint64_t lastUsedTimestamp{};
     std::string name{};
     std::string className{};
     uint64_t exp{};
@@ -14,4 +15,4 @@ public:
     Equipment equipment{};
 };
 
-#endif //DARK_TRIAD_SERVICES_CHARACTER_HPP
+#endif //DARK_TRIAD_SERVICES_DISPLAY_CHARACTER_HPP

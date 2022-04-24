@@ -1,9 +1,9 @@
 #include <drogon_extended/exception_mapper/exception_mapper_macros.hpp>
 
 #include "include/service/characters/characters_service.hpp"
-#include "include/service/characters/model/character.hpp"
+#include "include/service/characters/model/display_character.hpp"
 #include "include/controller/protected_api/protected_characters_controller.hpp"
-#include "include/factory/character_factory.hpp"
+#include "include/factory/display_character_factory.hpp"
 #include "include/factory/character_creation_factory.hpp"
 
 drogon::Task<> protected_api::characters::get_all_characters(drogon::HttpRequestPtr request,
@@ -15,12 +15,12 @@ drogon::Task<> protected_api::characters::get_all_characters(drogon::HttpRequest
         auto decodedJwtToken = jwtTokenGuard.check(request);
         std::string userId = decodedJwtToken.get_payload_claim("email")
                                             .as_string();
-        auto characters = co_await charactersService->all_characters(userId);
+        auto characters = co_await charactersService->get_all_characters(userId);
 
         Json::Value charactersJson;
 
         for (int i = 0; i < characters.size(); ++i)
-            charactersJson[i] = *CharacterFactory::to_json(characters[i]);
+            charactersJson[i] = *DisplayCharacterFactory::to_json(characters[i]);
 
         Json::Value charactersResponse;
         charactersResponse["characters"] = charactersJson;

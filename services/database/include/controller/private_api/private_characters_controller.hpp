@@ -18,14 +18,13 @@ namespace private_api
 
     public:
         METHOD_LIST_BEGIN
-            METHOD_ADD(characters::get_character, "/{1}/userId/{2}", drogon::Get);
+            METHOD_ADD(characters::get_character, "/{1}", drogon::Get);
             METHOD_ADD(characters::update_exp, "/{1}/exp/{2}}", drogon::Put);
         METHOD_LIST_END
 
-        drogon::Task<> get_character(drogon::HttpRequestPtr request,
-                                     std::function<void(const drogon::HttpResponsePtr&)> callback,
-                                     const std::string& characterName,
-                                     const std::string& userId);
+        drogon::Task<>
+        get_character(drogon::HttpRequestPtr request, std::function<void(const drogon::HttpResponsePtr&)> callback,
+                      const std::string& characterName);
 
         drogon::Task<void> update_exp(drogon::HttpRequestPtr request,
                                       std::function<void(const drogon::HttpResponsePtr&)> callback,

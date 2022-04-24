@@ -5,7 +5,7 @@
 
 class CharacterNotFoundException: public std::runtime_error {
 public:
-    explicit CharacterNotFoundException(const std::string& arg);
+    explicit CharacterNotFoundException(const std::string& name);
 };
 
 #endif //DARK_TRIAD_SERVICES_CHARACTER_NOT_FOUND_EXCEPTION_HPP

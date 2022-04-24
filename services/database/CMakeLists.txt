@@ -14,7 +14,7 @@ add_executable(
 
         ${INCLUDES}
         ${SOURCES}
-        include/service/characters/model/statistic.hpp src/factory/statistic_factory.cpp include/factory/statistic_factory.hpp)
+)
 
 # String format lib (to be exchanged with std::format in c++20)
 find_package(fmt)

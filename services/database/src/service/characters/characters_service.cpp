@@ -4,24 +4,14 @@
 #include "include/service/characters/util/starter_equipment.hpp"
 #include "include/service/characters/characters_service.hpp"
 
-drogon::Task<Character> CharactersService::get_character(const std::string& userId, const std::string& characterName)
+drogon::Task<Character> CharactersService::get_character(const std::string& name)
 {
-    co_return co_await charactersDb->get_character(userId, characterName);
+    co_return co_await charactersDb->get_character(name);
 }
 
-drogon::Task<std::vector<Character>> CharactersService::all_characters(const std::string& userId)
+drogon::Task<std::vector<DisplayCharacter>> CharactersService::get_all_characters(const std::string& userId)
 {
-    auto characters = co_await charactersDb->all_characters(userId);
-
-    std::sort(
-            characters.begin(),
-            characters.end(),
-            [](const Character& character1, const Character& character2) {
-                return character1.statistic.lastUsedTimestamp > character2.statistic.lastUsedTimestamp;
-            }
-    );
-
-    co_return characters;
+    co_return co_await charactersDb->get_all_characters(userId);
 }
 
 drogon::Task<> CharactersService::create_character(const std::string& userId, CharacterCreation& characterCreation)
@@ -31,7 +21,7 @@ drogon::Task<> CharactersService::create_character(const std::string& userId, Ch
 
     check_character_name(characterCreation.name);
 
-    Character character{
+    DisplayCharacter character{
             .name = characterCreation.name,
             .className = characterCreation.className,
             .exp = 0,
@@ -52,9 +42,9 @@ void CharactersService::delete_all_characters(const std::string& userId)
     charactersDb->delete_all_characters(userId);
 }
 
-drogon::Task<bool> CharactersService::character_name_exists(const std::string& characterName)
+drogon::Task<bool> CharactersService::character_name_exists(const std::string& name)
 {
-    co_return co_await charactersDb->character_name_exists(characterName);
+    co_return co_await charactersDb->character_name_exists(name);
 }
 
 void CharactersService::update_exp(const std::string& characterName, uint32_t exp)

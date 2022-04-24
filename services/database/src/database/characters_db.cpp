@@ -1,41 +1,43 @@
 #include <fmt/format.h>
 
-#include <include/service/characters/exception/character_not_found_exception.hpp>
+#include <include/service/characters/exception/no_characters_found_exception.hpp>
+#include "include/service/characters/exception/character_not_found_exception.hpp"
+#include "include/factory/util/characters_db_color_util.hpp"
+#include "include/factory/display_character_factory.hpp"
+#include "include/factory/character_factory.hpp"
 #include "include/database/characters_db.hpp"
-#include "include/database/utils/characters_db_color_util.hpp"
 
-drogon::Task<Character> CharactersDB::get_character(const std::string& userId, const std::string& characterName)
+drogon::Task<Character> CharactersDB::get_character(const std::string& name)
 {
     auto sql = fmt::format(
             R"(
                 SELECT *
                 FROM character,
                      appearance,
-                     equipment,
-                     statistic
-                WHERE character.user_id = '{}' AND
-                      character.name = '{}' AND
+                     equipment
+                WHERE character.name = '{}' AND
                       character.name = appearance.character AND
-                      character.name = equipment.character AND
-                      character.name = statistic.character;
-                )",
-            userId,
-            characterName
+                      character.name = equipment.character;
+            )",
+            name
     );
 
     auto rows = co_await postgres->execSqlCoro(sql);
 
     if (rows.empty())
-        throw CharacterNotFoundException(userId);
+        throw CharacterNotFoundException(name);
 
-    co_return build_character(rows[0]);
+    co_return CharacterFactory::from_orm(rows[0]);
 }
 
-drogon::Task<std::vector<Character>> CharactersDB::all_characters(const std::string& userId)
+drogon::Task<std::vector<DisplayCharacter>> CharactersDB::get_all_characters(const std::string& userId)
 {
     auto sql = fmt::format(
             R"(
-                SELECT *
+                SELECT character.*,
+                       appearance.*,
+                       equipment.*,
+                       statistic.last_used_timestamp
                 FROM character,
                      appearance,
                      equipment,
@@ -50,17 +52,17 @@ drogon::Task<std::vector<Character>> CharactersDB::all_characters(const std::str
     auto rows = co_await postgres->execSqlCoro(sql);
 
     if (rows.empty())
-        throw CharacterNotFoundException(userId);
+        throw NoCharactersFoundException(userId);
 
-    auto characters = std::vector<Character>(rows.size());
+    auto characters = std::vector<DisplayCharacter>(rows.size());
 
     for (int i = 0; i < rows.size(); ++i)
-        characters[i] = build_character(rows[i]);
+        characters[i] = DisplayCharacterFactory::from_orm(rows[i]);
 
     co_return characters;
 }
 
-drogon::Task<> CharactersDB::create_character(const std::string& userId, const Character& character)
+drogon::Task<> CharactersDB::create_character(const std::string& userId, const DisplayCharacter& character)
 {
     auto currentTimestamp = std::chrono::duration_cast<std::chrono::seconds>(
             std::chrono::system_clock::now().time_since_epoch()
@@ -162,11 +164,11 @@ void CharactersDB::delete_all_characters(const std::string& userId)
     postgres->execSqlAsyncFuture(sql);
 }
 
-drogon::Task<bool> CharactersDB::character_name_exists(const std::string& characterName)
+drogon::Task<bool> CharactersDB::character_name_exists(const std::string& name)
 {
     auto sql = fmt::format(
             "SELECT * FROM character WHERE name = '{}';",
-            characterName
+            name
     );
     auto rows = co_await postgres->execSqlCoro(sql);
 
@@ -181,41 +183,4 @@ void CharactersDB::update_exp(const std::string& characterName, uint32_t exp)
             characterName
     );
     postgres->execSqlAsyncFuture(sql);
-}
-
-Character CharactersDB::build_character(const drogon::orm::Row& row)
-{
-    return Character{
-            .name = row["name"].c_str(),
-            .className = row["class"].c_str(),
-            .exp = row["exp"].as<uint64_t>(),
-            .appearance{
-                    .gender = row["gender"].c_str(),
-                    .height = row["height"].as<double>(),
-                    .faceId = row["face_id"].as<int32_t>(),
-                    .earsId = row["ears_id"].as<int32_t>(),
-                    .hairId = row["hair_id"].as<int32_t>(),
-                    .eyebrowsId = row["eyebrows_id"].as<int32_t>(),
-                    .facialHairId = row["facial_hair_id"].as<int32_t>(),
-                    .skinColor = CharactersDBColorUtil::decode_color(row["skin_color"].as<int>()),
-                    .eyeColor = CharactersDBColorUtil::decode_color(row["eye_color"].as<int>()),
-                    .scarColor = CharactersDBColorUtil::decode_color(row["scar_color"].as<int>()),
-                    .tattooColor = CharactersDBColorUtil::decode_color(row["tattoo_color"].as<int>()),
-                    .hairColor = CharactersDBColorUtil::decode_color(row["hair_color"].as<int>())
-            },
-            .equipment {
-                    .mainWeapon = row["main_weapon"].c_str(),
-                    .supportWeapon = row["support_weapon"].c_str(),
-                    .headArmour = row["head_armour"].c_str(),
-                    .torsoArmour = row["torso_armour"].c_str(),
-                    .shoulderArmour = row["shoulder_armour"].c_str(),
-                    .armArmour = row["arm_armour"].c_str(),
-                    .legArmour = row["leg_armour"].c_str(),
-                    .footArmour = row["foot_armour"].c_str()
-            },
-            .statistic {
-                    .createdTimestamp = row["created_timestamp"].as<uint64_t>(),
-                    .lastUsedTimestamp = row["last_used_timestamp"].as<uint64_t>(),
-            }
-    };
 }

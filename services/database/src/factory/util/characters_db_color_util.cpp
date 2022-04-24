@@ -1,5 +1,5 @@
 #include <cmath>
-#include "include/database/utils/characters_db_color_util.hpp"
+#include "include/factory/util/characters_db_color_util.hpp"
 
 int CharactersDBColorUtil::encode_color(const Color& color)
 {
