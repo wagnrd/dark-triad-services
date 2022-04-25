@@ -6,9 +6,9 @@
 class ChallengeResponseSession {
 public:
     std::string id;
-    int response;
+    int64_t response;
 
-    ChallengeResponseSession(std::string id, int response) : id(std::move(id)), response(response)
+    ChallengeResponseSession(std::string id, int64_t response) : id(std::move(id)), response(response)
     {}
 };
 

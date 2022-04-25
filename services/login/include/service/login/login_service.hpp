@@ -18,7 +18,7 @@ class LoginService: public Service<LoginService> {
     SessionsDB* sessionsDB = SessionsDB::get();
 
 public:
-    ChallengeSession get_challenge_session(int clientNonce);
+    ChallengeSession get_challenge_session(int32_t clientNonce);
     drogon::Task<OidcIdToken> get_token(const ChallengeResponseSession& session, const Credentials& credentials);
 };
 

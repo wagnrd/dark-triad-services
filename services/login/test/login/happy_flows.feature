@@ -17,7 +17,7 @@ Feature: Login happy cases
     And request { session_id: #(sessionId), challenge_response: #(challengeResponse), email: '<email>', password: '<password>' }
     When method post
     Then status 200
-    And match response == { id_token: #string, token_type: #string }
+    And match response == { id_token: #string, token_type: 'Bearer' }
 
     Given path 'public_api/login/token'
     And request { session_id: #(sessionId), challenge_response: #(challengeResponse), email: '<email>', password: '<password>' }
@@ -25,6 +25,7 @@ Feature: Login happy cases
     Then status 404
 
     Examples:
-      | nonce | email          | password |
-      | 1     | test@test.com  | Test1234 |
-      | 2     | test1@test.com | Test1234 |
+      | nonce       | email          | password |
+      | 1234        | test@test.com  | Test1234 |
+      | -2147483648 | test1@test.com | Test1234 |
+      | 2147483647  | test1@test.com | Test1234 |

@@ -5,10 +5,10 @@
 #include <include/service/login/exception/invalid_session_exception.hpp>
 #include "include/database/sessions_db.hpp"
 
-ChallengeSession SessionsDB::createSession(int clientNonce)
+ChallengeSession SessionsDB::createSession(int32_t clientNonce)
 {
     auto sessionId = drogon::utils::getUuid();
-    auto serverNonce = std::rand(); // NOLINT(cert-msc50-cpp)
+    int64_t serverNonce = std::rand(); // NOLINT(cert-msc50-cpp)
     auto challenge = clientNonce + serverNonce;
 
     auto command = fmt::format(

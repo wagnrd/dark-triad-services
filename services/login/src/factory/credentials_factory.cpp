@@ -1,6 +1,6 @@
-#include <drogon_extended/json_mapper/json_converter.hpp>
+#include "drogon_extended/json_mapper/json_converter.hpp"
 
-#include "include/controller/factory/credentials_factory.hpp"
+#include "include/factory/credentials_factory.hpp"
 
 Credentials CredentialsFactory::from_json(const std::shared_ptr<Json::Value>& jsonPtr)
 {

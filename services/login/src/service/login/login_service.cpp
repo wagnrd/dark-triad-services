@@ -3,7 +3,7 @@
 #include <include/service/login/exception/invalid_challenge_response_exception.hpp>
 #include "include/service/login/login_service.hpp"
 
-ChallengeSession LoginService::get_challenge_session(int clientNonce)
+ChallengeSession LoginService::get_challenge_session(int32_t clientNonce)
 {
     LOG_DEBUG << "Creating session for clientNonce: " << clientNonce;
     auto session = sessionsDB->createSession(clientNonce);

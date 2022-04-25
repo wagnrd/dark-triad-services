@@ -30,6 +30,17 @@ void GlobalExceptionMapper::handle_global_exceptions(std::function<void()>&& con
         );
         callback(response);
     }
+    catch (Json::Exception& e)
+    {
+        LOG_ERROR << e.what();
+
+        auto response = build_exception_response(
+                drogon::HttpStatusCode::k400BadRequest,
+                "Data has wrong format",
+                e.what()
+        );
+        callback(response);
+    }
     catch (const std::exception& e)
     {
         LOG_ERROR << e.what();

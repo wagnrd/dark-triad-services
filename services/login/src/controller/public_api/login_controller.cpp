@@ -3,9 +3,9 @@
 #include <drogon_extended/json_mapper/json_converter.hpp>
 
 #include <include/controller/public_api/login_controller.hpp>
-#include <include/controller/factory/challenge_session_factory.hpp>
-#include <include/controller/factory/challenge_response_session_factory.hpp>
-#include <include/controller/factory/credentials_factory.hpp>
+#include <include/factory/challenge_session_factory.hpp>
+#include <include/factory/challenge_response_session_factory.hpp>
+#include <include/factory/credentials_factory.hpp>
 
 drogon::Task<> public_api::login::challenge(drogon::HttpRequestPtr request,
                                             std::function<void(const drogon::HttpResponsePtr&)> callback)
@@ -54,5 +54,3 @@ drogon::Task<> public_api::login::get_token(drogon::HttpRequestPtr request,
 
     co_return;
 }
-
-

@@ -91,3 +91,15 @@ Feature: Login happy cases
       | 1     | invalid@email.com | invalidPassword |
       | 2     | invalid@email.com | Test1234        |
       | 3     | test@test.com     | invalidPassword |
+
+  Scenario Outline: Get rejected when providing a nonce outside of 32 bit range
+
+    Given path 'public_api/login/challenge'
+    And request { nonce: <nonce> }
+    When method post
+    Then status 400
+
+    Examples:
+      | nonce         | email          | password |
+      | -112147483649 | test1@test.com | Test1234 |
+      | 112147483648  | test1@test.com | Test1234 |

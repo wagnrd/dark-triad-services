@@ -11,7 +11,7 @@ class SessionsDB: public Service<SessionsDB> {
     std::shared_ptr<drogon::nosql::RedisClient> redis = drogon::app().getRedisClient();
 
 public:
-    ChallengeSession createSession(int clientNonce);
+    ChallengeSession createSession(int32_t clientNonce);
     drogon::Task<int> findServerNonceBySessionId(const std::string& sessionId);
     void deleteSessionBySessionId(const std::string& sessionId);
 };

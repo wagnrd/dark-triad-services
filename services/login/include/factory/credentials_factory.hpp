@@ -1,7 +1,7 @@
 #ifndef DARK_TRIAD_LOGIN_SERVICE_CREDENTIALS_FACTORY_HPP
 #define DARK_TRIAD_LOGIN_SERVICE_CREDENTIALS_FACTORY_HPP
 
-#include <include/service/login/model/credentials.hpp>
+#include "../service/login/model/credentials.hpp"
 #include <json/value.h>
 
 class CredentialsFactory {
