@@ -2,8 +2,9 @@
 #include <drogon/drogon.h>
 
 #include <drogon/HttpTypes.h>
+#include "drogon_extended/security/exceptions/unauthorized_exception.hpp"
+
 #include <include/client/factory/oidc_id_token_factory.hpp>
-#include <include/client/exceptions/unauthorized_exception.hpp>
 #include "include/client/auth0_client.hpp"
 
 OidcIdToken Auth0Client::get_token(const Credentials& credentials)
@@ -11,14 +12,14 @@ OidcIdToken Auth0Client::get_token(const Credentials& credentials)
     auto oidcClient = create_client();
 
     auto request = create_request(credentials);
-    auto[result, response] = oidcClient->sendRequest(request, 30);
+    auto [result, response] = oidcClient->sendRequest(request, 30);
 
     verify_response(result, response);
 
     return OidcIdTokenFactory::from_json(response->jsonObject());
 }
 
-void Auth0Client::verify_response(drogon::ReqResult result, drogon::HttpResponsePtr response) const
+void Auth0Client::verify_response(drogon::ReqResult result, const drogon::HttpResponsePtr& response) const
 {
     if (result == drogon::ReqResult::Ok && response->statusCode() == drogon::k200OK)
         return;
@@ -32,7 +33,7 @@ void Auth0Client::verify_response(drogon::ReqResult result, drogon::HttpResponse
     if (response->statusCode() == drogon::k401Unauthorized || response->statusCode() == drogon::k403Forbidden)
     {
         auto responseBody = std::string(response->body());
-        throw UnauthorizedException();
+        throw UnauthorizedException("E-Mail or password is incorrect");
     }
     else
     {
@@ -87,4 +88,3 @@ drogon::HttpClientPtr Auth0Client::create_client()
 {
     return drogon::HttpClient::newHttpClient(config->oidc->baseUrl);
 }
-

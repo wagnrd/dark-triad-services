@@ -21,7 +21,7 @@ private:
     drogon::HttpClientPtr create_client();
     drogon::HttpRequestPtr create_request(const Credentials& credentials) const;
     std::string result_to_string(drogon::ReqResult requestResult) const;
-    void verify_response(drogon::ReqResult result, drogon::HttpResponsePtr response) const;
+    void verify_response(drogon::ReqResult result, const drogon::HttpResponsePtr& response) const;
 };
 
 #endif //DARK_TRIAD_LOGIN_SERVICE_AUTH0_CLIENT_HPP
